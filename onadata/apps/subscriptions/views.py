@@ -94,17 +94,12 @@ def stripe_webhook(request):
 
     try:
         event_json = json.loads(request.body)
-        print('Event occursssssssssssssssssssssssss', event_json['type'])
+        print('...........Event occurs..................', event_json['type'])
 
         timestamp = int(event_json['data']['object']['period_start'])
         timestamp_to_date = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d')
 
-        if event_json['type'] == 'invoice.created' and timestamp_to_date != datetime.now().strftime('%Y-%m-%d'):
-            """
-            
-            Executed in last day of subscribed period(month/year), updating Invoice in stripe for the next month/year 
-            """
-            print('Execute from the first month/year/day last day')
+        if event_json['type'] == 'invoice.created':
 
             def metered_usage_api(quantity):
                 """
@@ -147,106 +142,115 @@ def stripe_webhook(request):
             elif package_period == 2:
                 start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-2)
 
-            outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(date=start_date)
-
-            submission_count = outstanding+flagged+approved+rejected
-
-            # filtering for test day
-            previous_day = datetime.now()+dateutil.relativedelta.relativedelta(days=-1)
-            invoice = Invoice.objects.filter(customer__stripe_cust_id=event_json['data']['object']['customer'],
-                                             created__year=previous_day.year, created__month=previous_day.month,
-                                             created__day=previous_day.day).get()
-            previous_roll_over = invoice.roll_over
-
-            package = Subscription.objects.get(stripe_customer=stripe_cust_id).package
-
-            if previous_roll_over > 0 and submission_count > package.submissions:
-                """
-                
-                if previous roll over and there is overage case in this month
+            if timestamp_to_date == datetime.now().strftime('%Y-%m-%d'):
                 """
 
-                available_submissions = previous_roll_over + package.submissions - submission_count
+                First Payment after subscribed to plans in stripe, create invoice object
+                """
+                print('....................First Invoice Object..................')
 
-                if available_submissions >= 0:
+                # after payment succeeded, create Invoice object in first month or year
+                package = Subscription.objects.get(stripe_customer=stripe_cust_id).package
+                invoice_data = {
+                    'customer': stripe_cust_id,
+                    'created': datetime.utcfromtimestamp(int(event_json['data']['object']['date'])),
+                    'amount': package.total_charge,
+                    'quantity': package.submissions,
+                    'overage': 0,
+                    'roll_over': 0
+                }
+                Invoice.objects.create(**invoice_data)
+
+            else:
+                """
+
+                Executed in last day of subscribed period(month/year), updating Invoice in stripe for the next month/year 
+                """
+
+                print('...........Execute from the first month/year/day last day '
+                      '(creating invoice object from second month)............')
+                outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(date=start_date)
+
+                submission_count = outstanding+flagged+approved+rejected
+
+                # filtering for test day
+                previous_day = datetime.now()+dateutil.relativedelta.relativedelta(days=-1)
+                invoice = Invoice.objects.filter(customer__stripe_cust_id=event_json['data']['object']['customer'],
+                                                 created__year=previous_day.year, created__month=previous_day.month,
+                                                 created__day=previous_day.day).get()
+                previous_roll_over = invoice.roll_over
+
+                package = Subscription.objects.get(stripe_customer=stripe_cust_id).package
+
+                if previous_roll_over > 0 and submission_count > package.submissions:
                     """
                     
-                    roll over or equal to 0
+                    if previous roll over and there is overage case in this month
                     """
+
+                    available_submissions = previous_roll_over + package.submissions - submission_count
+
+                    if available_submissions >= 0:
+                        """
+                        
+                        roll over or equal to 0
+                        """
+
+                        metered_usage_api(quantity=0)
+                        invoice_obj(amount=package.total_charge, quantity=package.submissions, overage=0,
+                                    roll_over=available_submissions)
+
+                    else:
+                        """
+                        
+                        not roll over
+                        """
+                        metered_usage_api(quantity=submission_count)
+                        invoice_obj(amount=package.total_charge, quantity=package.total_charge+(abs(available_submissions)*package.extra_submissions_charge)
+                                , overage=abs(available_submissions), roll_over=0)
+
+                elif previous_roll_over == 0 and submission_count > package.submissions:
+                    metered_usage_api(quantity=submission_count)
+
+                    invoice_obj(amount=package.total_charge+((submission_count-package.submissions)*package.extra_submissions_charge),
+                            quantity=submission_count, overage=submission_count-package.submissions, roll_over=0)
+
+                elif previous_roll_over > 0 and submission_count < package.submissions:
+                    available_submissions = previous_roll_over + package.submissions + (package.submissions-submission_count)
 
                     metered_usage_api(quantity=0)
-                    invoice_obj(amount=package.total_charge, quantity=package.submissions, overage=0,
-                                roll_over=available_submissions)
 
-                else:
-                    """
-                    
-                    not roll over
-                    """
+                    invoice_obj(amount=package.total_charge, quantity=package.submissions, overage=0, roll_over=available_submissions)
+
+                elif previous_roll_over == 0 and submission_count < package.submissions:
+                    metered_usage_api(quantity=0)
+
+                    invoice_obj(amount=package.total_charge, quantity=submission_count, overage=0, roll_over=package.submissions-submission_count)
+
+                elif previous_roll_over == 0 and submission_count == package.submissions:
                     metered_usage_api(quantity=submission_count)
-                    invoice_obj(amount=package.total_charge, quantity=package.total_charge+(abs(available_submissions)*package.extra_submissions_charge)
-                            , overage=abs(available_submissions), roll_over=0)
 
-            elif previous_roll_over == 0 and submission_count > package.submissions:
-                metered_usage_api(quantity=submission_count)
+                    invoice_obj(amount=package.total_charge, quantity=submission_count, overage=0, roll_over=0)
 
-                invoice_obj(amount=package.total_charge+((submission_count-package.submissions)*package.extra_submissions_charge),
-                        quantity=submission_count, overage=submission_count-package.submissions, roll_over=0)
-
-            elif previous_roll_over > 0 and submission_count < package.submissions:
-                available_submissions = previous_roll_over + package.submissions + (package.submissions-submission_count)
-
-                metered_usage_api(quantity=0)
-
-                invoice_obj(amount=package.total_charge, quantity=package.submissions, overage=0, roll_over=available_submissions)
-
-            elif previous_roll_over == 0 and submission_count < package.submissions:
-                metered_usage_api(quantity=0)
-
-                invoice_obj(amount=package.total_charge, quantity=submission_count, overage=0, roll_over=package.submissions-submission_count)
-
-            elif previous_roll_over == 0 and submission_count == package.submissions:
-                metered_usage_api(quantity=submission_count)
-
-                invoice_obj(amount=package.total_charge, quantity=submission_count, overage=0, roll_over=0)
-
-
-        # if event_json['type'] == 'invoice.payment_succeeded' and timestamp_to_date != datetime.now().strftime('%Y-%m-%d'):
+        # elif event_json['type'] == 'invoice.payment_succeeded' and timestamp_to_date == datetime.now().strftime('%Y-%m-%d'):
         #     """
         #
-        #     Payment success in second month/year.
+        #     First Payment after subscribed to plans in stripe, create invoice object
         #     """
-        #     print('Not to executeeeeeeeeeeeeeeeeeeeeeeeeeeeeee invoice.payment.succeded')
-        #     # after payment succeeded, create Invoice object in next month
+        #     print('Firsttttttttttttttttt payment success')
+        #
+        #     # after payment succeeded, create Invoice object in first month or year
+        #     stripe_cust_id = Customer.objects.get(stripe_cust_id=event_json['data']['object']['customer'])
+        #     package = Subscription.objects.get(stripe_customer=stripe_cust_id).package
         #     invoice_data = {
-        #         'customer': Customer.objects.get(stripe_cust_id=event_json['data']['object']['customer']),
-        #         'created': event_json['data']['object']['date'],
-        #         'amount': event_json['data']['object']['amount_paid'],
-        #         'quantity': '',
-        #         'overage': 12,
+        #         'customer': stripe_cust_id,
+        #         'created': datetime.utcfromtimestamp(int(event_json['data']['object']['date'])),
+        #         'amount': event_json['data']['object']['amount_paid']/100,
+        #         'quantity': package.submissions,
+        #         'overage': 0,
         #         'roll_over': 0
         #     }
         #     Invoice.objects.create(**invoice_data)
-
-        elif event_json['type'] == 'invoice.payment_succeeded' and timestamp_to_date == datetime.now().strftime('%Y-%m-%d'):
-            """
-            
-            First Payment after subscribed to plans in stripe, create invoice object
-            """
-            print('Firsttttttttttttttttt payment success')
-
-            # after payment succeeded, create Invoice object in first month or year
-            stripe_cust_id = Customer.objects.get(stripe_cust_id=event_json['data']['object']['customer'])
-            package = Subscription.objects.get(stripe_customer=stripe_cust_id).package
-            invoice_data = {
-                'customer': stripe_cust_id,
-                'created': datetime.utcfromtimestamp(int(event_json['data']['object']['date'])),
-                'amount': event_json['data']['object']['amount_paid']/100,
-                'quantity': package.submissions,
-                'overage': 0,
-                'roll_over': 0
-            }
-            Invoice.objects.create(**invoice_data)
 
         return HttpResponse(status=200)
 
