@@ -61,7 +61,7 @@ from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, S
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
                     SiteBulkEditForm, SiteTypeForm)
 
-from  onadata.apps.subscriptions.models import Subscription
+from onadata.apps.subscriptions.models import Subscription, Customer, Package
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -213,7 +213,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
                                             site__isnull = True,
                                             ended_at__isnull=True)
         key = settings.STRIPE_PUBLISHABLE_KEY
-        has_user_package = Subscription.objects.filter(stripe_customer__user=self.request.user).values('package').exists()
+        # has_user_package = Subscription.objects.filter(stripe_customer__user=self.request.user).values('package').exists()
+        has_user_free_package = Subscription.objects.filter(stripe_sub_id="free_plan", stripe_customer__user=self.request.user).exists()
 
         dashboard_data = {
             'obj': obj,
@@ -234,7 +235,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'roles_org': roles_org,
             'total_submissions': flagged + approved + rejected + outstanding,
             'key': key,
-            'has_user_package': has_user_package
+            'has_user_free_package': has_user_free_package
         }
         return dashboard_data
 
@@ -453,6 +454,13 @@ class OrganizationCreateView(OrganizationView, CreateView):
         if not profile.organization:
             profile.organization = self.object
             profile.save()
+
+        # subscribed to free plan
+        if not user.is_superuser:
+            free_package = Package.objects.get(plan=0)
+            customer = Customer.objects.create(user=self.request.user, stripe_cust_id="free_cust_id")
+            Subscription.objects.create(stripe_sub_id="free_plan", stripe_customer=customer, initiated_on=datetime.datetime.now(),
+                                        package=free_package, organization=self.object)
 
         project = Project.objects.get(name="Example Project", organization_id=self.object.id)
         sites = Site.objects.filter(project=project)

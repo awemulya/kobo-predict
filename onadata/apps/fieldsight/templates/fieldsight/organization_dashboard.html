@@ -40,7 +40,7 @@ var org = "{{obj.pk}}";
 <!-- choose package popup -->
 <!-- Modal -->
 {% if not request.user.is_superuser%}
-	{% if not has_user_package %}
+	{% if has_user_free_package  %}
 	<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">

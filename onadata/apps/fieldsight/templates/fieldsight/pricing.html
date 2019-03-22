@@ -26,15 +26,7 @@
 						    				<h5><strong>Free Tier</strong></h5>
 						    				Free
 						    				<p>Free features for your team and organization.</p>
-											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="free_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-											</form>
+												<button type="submit" disabled class="btn btn-sm btn-xs btn-block btn-primary">Selected</button>
 
 						    			</div>
 						    		</td>
@@ -430,15 +422,7 @@
 							    	<tr>
 							    		<th class="border-top"></th>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="free_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-											</form>
+												<button type="submit" disabled class="btn btn-sm btn-xs btn-block btn-primary">Selected</button>
 							    		</td>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
 												<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">

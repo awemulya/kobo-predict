@@ -35,10 +35,9 @@ def subscribe_view(request, org_id):
             'metadata': {'username': request.user.username}
         }
         customer = stripe.Customer.create(**customer_data)
-        try:
-            cust = Customer.objects.create(user=request.user, stripe_cust_id=customer.id)
-        except Exception as e:
-            return JsonResponse({'error': 'User has already registered to Stripe.'})
+        cust = Customer.objects.get(user=request.user)
+        cust.stripe_cust_id = customer.id
+        cust.save()
         period = request.POST['interval']
         if period == 'Yearly':
             overage_plan = settings.YEARLY_PLANS_OVERRAGE[request.POST['plan_name']]
@@ -66,7 +65,6 @@ def subscribe_view(request, org_id):
 
         sub_data = {
             'stripe_sub_id': sub.id,
-            'stripe_customer': cust,
             'is_active': True,
             'initiated_on': datetime.now(),
             'package': Package.objects.get(plan=settings.PLANS[selected_plan]),
@@ -75,7 +73,9 @@ def subscribe_view(request, org_id):
 
         }
         try:
-            Subscription.objects.create(**sub_data)
+            # Subscription.objects.create(**sub_data)
+            Subscription.objects.filter(stripe_customer=cust, stripe_sub_id="free_plan").update(**sub_data)
+
         except Exception as e:
             return JsonResponse({'error': str(e)})
 
