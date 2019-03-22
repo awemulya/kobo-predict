@@ -1,5 +1,6 @@
 import stripe
 import json
+import time
 from datetime import datetime
 import dateutil.relativedelta
 
@@ -99,6 +100,8 @@ def stripe_webhook(request):
         # timestamp = int(event_json['data']['object']['period_start'])
         sub_obj = Subscription.objects.get(stripe_customer__stripe_cust_id=event_json['data']['object']['customer'])
         subscription_date = sub_obj.initiated_on.strftime('%Y-%m-%d')
+        now = datetime.now()
+        timestamp = int(time.mktime(now.timetuple()))
 
         if event_json['type'] == 'invoice.created':
 
@@ -111,7 +114,7 @@ def stripe_webhook(request):
 
                 stripe.UsageRecord.create(
                     quantity=quantity,
-                    timestamp=event_json['data']['object']['period_start'],
+                    timestamp=timestamp,
                     subscription_item=event_json['data']['object']['lines']['data'][2]['subscription_item'],
                     action='set'
                 )
