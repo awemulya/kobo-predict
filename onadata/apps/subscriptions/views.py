@@ -40,10 +40,10 @@ def subscribe_view(request, org_id):
         cust.stripe_cust_id = customer.id
         cust.save()
         period = request.POST['interval']
-        if period == 'Yearly':
+        if period == 'yearly':
             overage_plan = settings.YEARLY_PLANS_OVERRAGE[request.POST['plan_name']]
             selected_plan = settings.YEARLY_PLANS[request.POST['plan_name']]
-        elif period == 'Monthly':
+        elif period == 'monthly':
             overage_plan = settings.MONTHLY_PLANS_OVERRAGE[request.POST['plan_name']]
             selected_plan = settings.MONTHLY_PLANS[request.POST['plan_name']]
 

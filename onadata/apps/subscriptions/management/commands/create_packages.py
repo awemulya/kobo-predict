@@ -52,6 +52,16 @@ class Command(BaseCommand):
                  {'Scale Yearly':
                       {'submission': 40, 'extra_submissions_charge': 0.15, 'total_charge': 800, 'period_type': 2}
                   }
+            ,
+            9:
+                {'Starter Monthly':
+                     {'submission': 4, 'extra_submissions_charge': 0.35, 'total_charge': 50, 'period_type': 1}
+                 }
+            ,
+            10:
+                {'Starter Yearly':
+                     {'submission': 4, 'extra_submissions_charge': 0.35, 'total_charge': 50, 'period_type': 2}
+                 }
 
 
         }

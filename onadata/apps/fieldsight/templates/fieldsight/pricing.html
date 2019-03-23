@@ -1,478 +1,196 @@
 {% load static %}
-<div class="bg-light p-3">
+
+        <div class="bg-primary p-4">
+        	<div class="bg-light p-4 m-4">
         		<div class="pb-2"></div>
-        		<h4 class="text-center mt-4 mb-3"><strong>Fieldsight Pricing and Features</strong></h4>
+        		<h4 class="text-center mt-4 mb-3"><strong>Fieldsight Plans & Pricing</strong></h4>
         		<p class="text-center mb-4 text-xlight">Fieldsight is provided open-source and under a non-profit model.<br/>
-        		Fees for access to the system cover the costs of hosting data and providing support. <br/>These additional services are priced at our costs. Contact us more to discuss.</p>
-        		<div class="pb-2"></div>
-		  		<div class="bg-white p-2 mt-4">
-
-		  			<div class="table-responsive">
-					  	<table class="table table-borderless table-pricing table-hover">
-					    	<thead>
-					    		<tr>
-						    		<th>
-						    			<div class="pt-head text-center">
-						    				<img src="{% static 'images/fieldsight.png' %}" alt="fieldsight" height="100">
-						    				<select class="form-control form-control-sm mt-3" id="select_interval">
-						    					<option value="1">Yearly</option>
-						    					<option value="2">Monthly</option>
-						    				</select>
-
-						    			</div>
-						    		</th>
-						    		<td class="border-left">
-						    			<div class="pt-head text-center" id="pk_free">
-						    				<h5><strong>Free Tier</strong></h5>
-						    				Free
-						    				<p>Free features for your team and organization.</p>
-												<button type="submit" disabled class="btn btn-sm btn-xs btn-block btn-primary">Selected</button>
-
-						    			</div>
-						    		</td>
-						    		<td class="border-left">
-						    			<div class="pt-head text-center" id="pk_basic">
-						    				<h5><strong>Basic</strong></h5>
-											<span>USD 1,000</span> <sub>/Year</sub>
-						    				<p>All the basics for organization and team.</p>
-												<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-													<input type="hidden" name="plan_name" value="basic_plan"/>
-														<input type="hidden" name="interval" value="Yearly"/>
-
-													  {% csrf_token %}
-													{% include 'subscriptions/stripe_checkout.html' %}
-
-														<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-												</form>
-
-						    			</div>
-						    		</td>
-						    		<td class="border-left">
-						    			<div class="pt-head text-center" id="pk_extended">
-						    				<h5>Extended</h5>
-											<span>USD 5,000</span> <sub>/Year</sub>
-						    				<p>Quick and easy online fieldsight application.</p>
-											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="extended_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-						    				<!--<a href="#" title="" class="btn btn-sm btn-xs btn-block btn-primary">Select</a>-->
-						    			</div>
-						    		</td>
-						    		<td class="border-left">
-						    			<div class="pt-head text-center" id="pk_pro">
-						    				<h5>Pro</h5>
-											<span>USD 10,000</span> <sub>/Year</sub>
-						    				<p>Everything you need to grow your organization.</p>
-											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="pro_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-						    			</div>
-						    		</td>
-						    		<td class="border-left">
-						    			<div class="pt-head text-center" id="pk_scale">
-						    				<h5>Scale</h5>
-											<span>USD 30,000</span> <sub>/Year</sub>
-						    				<p>Advanced features for scaling your organization.</p>
-											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="scale_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-						    			</div>
-						    		</td>
-						    	</tr>
-					    	</thead>
-					    	<tbody>
-					    		<tbody>
-					    			<tr class="bg-light">
-					    				<th colspan="6"><strong>Users and User Roles</strong></th>
-					    			</tr>
-					    			<tr>
-							    		<th>
-							    			Total Number of Users
-							    		</th>
-							    		<td class="border-left text-center">
-							    			15
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr class="bg-light">
-					    				<th colspan="6"><strong>Projects and Sites</strong></th>
-					    			</tr>
-					    			<tr>
-							    		<th>
-							    			Number of Projects
-							    		</th>
-							    		<td class="border-left text-center">
-							    			2
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-					    			<tr>
-							    		<th>
-							    			Upload Referrence Materials
-							    		</th>
-							    		<td class="border-left text-center">
-							    			-
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Number of Sites
-							    		</th>
-							    		<td class="border-left text-center">
-							    			10
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Offline Data Submission
-							    		</th>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Offline Site Creation
-							    		</th>
-							    		<td class="border-left text-center">
-							    			-
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr class="bg-light">
-					    				<th colspan="6"><strong>Data management and Reporting</strong></th>
-					    			</tr>
-					    			<tr>
-							    		<th>
-							    			Submissions Per Year
-							    		</th>
-							    		<td class="border-left text-center">
-							    			1,000
-							    		</td>
-							    		<td class="border-left text-center">
-							    			5,000
-							    		</td>
-							    		<td class="border-left text-center">
-							    			20,000
-							    		</td>
-							    		<td class="border-left text-center">
-							    			50,000
-							    		</td>
-							    		<td class="border-left text-center">
-							    			150,000
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Site and Project Dashboards
-							    		</th>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    		<td class="border-left text-center">
-							    			<h6><span class="badge badge-pill badge-success"><i class="la la-check"></i></span></h6>
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Notifications
-							    		</th>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Data Export in CSV and XLS
-							    		</th>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Project Summary Reports
-							    		</th>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Unlimited
-							    		</td>
-							    	</tr>
-							    	<tr class="bg-light">
-					    				<th colspan="6"><strong>Prices</strong></th>
-					    			</tr>
-					    			<tr>
-							    		<th>
-							    			Extra Submissions
-							    		</th>
-							    		<td class="border-left text-center">
-							    			N/A
-							    		</td>
-							    		<td class="border-left text-center">
-							    			$0.25
-							    		</td>
-							    		<td class="border-left text-center">
-							    			$0.22
-							    		</td>
-							    		<td class="border-left text-center">
-							    			$0.20
-							    		</td>
-							    		<td class="border-left text-center">
-							    			$0.15
-							    		</td>
-							    	</tr>
-							    	<tr class="bg-light">
-					    				<th colspan="6"><strong>Service and Support</strong></th>
-					    			</tr>
-					    			<tr>
-							    		<th>
-							    			Training Support (Skype)
-							    		</th>
-							    		<td class="border-left text-center">
-							    			N/A
-							    		</td>
-							    		<td class="border-left text-center">
-							    			N/A
-							    		</td>
-							    		<td class="border-left text-center">
-							    			1
-							    		</td>
-							    		<td class="border-left text-center">
-							    			2
-							    		</td>
-							    		<td class="border-left text-center">
-							    			3
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Service
-							    		</th>
-							    		<td class="border-left text-center">
-							    			Manual
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Email
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Email and Voice
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Email and Voice
-							    		</td>
-							    		<td class="border-left text-center">
-							    			Priority
-							    		</td>
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Additional Training
-							    		</th>
-							    		<td class="border-left text-center">
-							    			N/A
-							    		</td>
-							    		<td class="border-left border-top text-center" colspan="4">
-							    			<a href="#" title="">Available at Cost, Contact us to Discuss</a>
-							    		</td>
-
-							    	</tr>
-							    	<tr>
-							    		<th>
-							    			Customization/Integration
-							    		</th>
-							    		<td class="border-left text-center">
-							    			N/A
-							    		</td>
-							    		<td class="border-left border-top text-center" colspan="4">
-							    			<a href="#" title="">Available at Cost, Contact us to Discuss</a>
-							    		</td>
-
-							    	</tr>
-							    	<tr>
-							    		<th class="border-top"></th>
-							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-												<button type="submit" disabled class="btn btn-sm btn-xs btn-block btn-primary">Selected</button>
-							    		</td>
-							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-												<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-													<input type="hidden" name="plan_name" value="basic_plan"/>
-														<input type="hidden" name="interval" value="Yearly"/>
-
-													  {% csrf_token %}
-													{% include 'subscriptions/stripe_checkout.html' %}
-
-														<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-												 </form>
-							    		</td>
-							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="extended_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-							    		</td>
-							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="pro_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-							    		</td>
-							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-												<input type="hidden" name="plan_name" value="scale_plan"/>
-												<input type="hidden" name="interval" value="Yearly"/>
-
-												  {% csrf_token %}
-												{% include 'subscriptions/stripe_checkout.html' %}
-												<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
-
-											</form>
-							    		</td>
-							    	</tr>
-					    		</tbody>
-					    	</tbody>
-					  	</table>
+        		Fees for access to the system cover the costs of hosting data and providing support. <br/>Additional services are priced at our costs. Contact us more to discuss.</p>
+        		<div class="pb-2 text-center">
+        			<div class="btn-group btn-group-toggle" data-toggle="buttons">
+					  <label class="btn btn-pk btn-outline-primary active">
+					    <input type="radio" name="pay-type" id="monthly" value="monthly" autocomplete="off" checked> Monthly
+					  </label>
+					  <label class="btn btn-pk btn-outline-primary">
+					    <input type="radio" name="pay-type" id="yearly" value="yearly" autocomplete="off"> Yearly
+					  </label>
 					</div>
+        		</div>
+		  		<div class="row">
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_free">
+		  					<div class="mp-head pbg-1">
+		  						<h4>Free</h4>
+						    	<h3><strong>$0</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>250</strong> Submissions</li>
+									<li><strong>15</strong> Users, <strong>2</strong> Projects, <strong>10</strong> Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+
+		  					</div>
+		  					<div class="mp-footer">
+								<button type="button" disabled  class="btn pbg-1 btn-block btn-lg">Selected</button>
+
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_starter">
+		  					<div class="mp-head pbg-2">
+		  						<h4>Starter</h4>
+						    	<h3><strong>$20</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>1,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+		  						<a href="#" title="" class="btn pbg-2 btn-block btn-lg">Select</a>
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_basic">
+		  					<div class="mp-head pbg-3">
+		  						<h4>Basic</h4>
+						    	<h3><strong>$100</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>5,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
+									<input type="hidden" name="plan_name" value="basic_plan"/>
+										<input type="hidden" name="interval" value="monthly"/>
+
+									  {% csrf_token %}
+									{% include 'subscriptions/stripe_checkout.html' %}
+
+										<button type="submit"  class="btn pbg-3 btn-block btn-lg">Select</button>
+
+								</form>
+
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_extended">
+		  					<div class="mp-head pbg-4">
+		  						<h4>Extended</h4>
+						    	<h3><strong>$500</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>20,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
+									<input type="hidden" name="plan_name" value="extended_plan"/>
+									<input type="hidden" name="interval" value="monthly"/>
+
+									  {% csrf_token %}
+									{% include 'subscriptions/stripe_checkout.html' %}
+									<button type="submit"  class="btn pbg-4 btn-block btn-lg">Select</button>
+
+								</form>
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_pro">
+		  					<div class="mp-head pbg-5">
+		  						<h4>Pro</h4>
+						    	<h3><strong>$1,000</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>50,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
+									<input type="hidden" name="plan_name" value="pro_plan"/>
+									<input type="hidden" name="interval" value="monthly"/>
+									  {% csrf_token %}
+									{% include 'subscriptions/stripe_checkout.html' %}
+									<button type="submit" class="btn pbg-5 btn-block btn-lg">Select</button>
+
+								</form>
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_scale">
+		  					<div class="mp-head pbg-6">
+		  						<h4>Scale</h4>
+						    	<h3><strong>$3,000</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>150,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
+									<input type="hidden" name="plan_name" value="scale_plan"/>
+									<input type="hidden" name="interval" value="monthly"/>
+
+									  {% csrf_token %}
+									{% include 'subscriptions/stripe_checkout.html' %}
+									<button type="submit"  class="btn btn-block pbg-6 btn-lg">Select</button>
+
+								</form>
+		  					</div>
+		  				</div>
+		  			</div>
 		  		</div>
 			</div>
-
+		</div>

@@ -427,57 +427,64 @@ var org = "{{obj.pk}}";
      var static_url ="{{ STATIC_URL }}";
      var data = {{ data|safe}};
 
-
-			$(document).ready(function(){
-			$("#select_interval").change(function(){
-				if($(this).val()== 1){
-					fn_yearly_tier();
-				}else if($(this).val()== 2){
-					fn_monthly_tier();
-				}
-			});
-
-
-
-			$("#select_interval").on('change',function(){
-				var getValue=$("#select_interval option:selected").text();
-				$('input[name="interval"]').val(getValue);
-			  });
-
-			});
-
-
-
-			function fn_yearly_tier(){
-				//Price Change
-				$("#pk_basic").find('span').text('USD 1,000');
-				$("#pk_extended").find('span').text('USD 5,000');
-				$("#pk_pro").find('span').text('USD 10,000');
-				$("#pk_scale").find('span').text('USD 30,000');
-
-				//Label change
-				$(".pt-head").find('sub').text('/Year');
-
-			}
-
-			function fn_monthly_tier(){
-				$("#pk_basic").find('span').text('USD 100');
-				$("#pk_extended").find('span').text('USD 500');
-				$("#pk_pro").find('span').text('USD 1,000');
-				$("#pk_scale").find('span').text('USD 3,000');
-
-				//Label change
-				$(".pt-head").find('sub').text('/Month');
-			}
-
 			var totalSItems = document.getElementsByClassName("stripe-button-el");
 
 			for(i = 0; i<totalSItems.length; i++){
 				totalSItems[i].style.display = 'none';
 			}
 
+
+			$('input[type=radio][name=pay-type]').change(function() {
+				$('input[name="interval"]').val(this.value);
+				console.log(this.value);
+
+			});
+
+
  	$('#pricingModal').modal('show');
 
     </script>
+	<script>
+			$(document).ready(function(){
+				fn_init_pack();
+
+
+				$('input[type=radio][name=pay-type]').change(function() {
+					fn_init_pack();
+				});
+
+				function fn_init_pack(){
+					if($("input[name='pay-type']:checked").val() == 'monthly'){
+						fn_monthly_tier();
+					}else{
+						fn_yearly_tier();
+					}
+				}
+				function fn_yearly_tier(){
+					$("#pk_free").find('.mp-head h3 strong').text('$0');
+					$("#pk_starter").find('.mp-head h3 strong').text('$200');
+					$("#pk_basic").find('.mp-head h3 strong').text('$1,000');
+					$("#pk_extended").find('.mp-head h3 strong').text('$5,000');
+					$("#pk_pro").find('.mp-head h3 strong').text('$10,000');
+					$("#pk_scale").find('.mp-head h3 strong').text('$30,000');
+
+					//
+					$(".module-pricing").find('.mp-head h3 sub').text('/Yr');
+				}
+
+				function fn_monthly_tier(){
+					$("#pk_free").find('.mp-head h3 strong').text('$0');
+					$("#pk_starter").find('.mp-head h3 strong').text('$20');
+					$("#pk_basic").find('.mp-head h3 strong').text('$100');
+					$("#pk_extended").find('.mp-head h3 strong').text('$500');
+					$("#pk_pro").find('.mp-head h3 strong').text('$1,000');
+					$("#pk_scale").find('.mp-head h3 strong').text('$3,000');
+
+					//
+					$(".module-pricing").find('.mp-head h3 sub').text('/Mo');
+				}
+			});
+		</script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
 {% endblock %}
