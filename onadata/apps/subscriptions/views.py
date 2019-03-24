@@ -282,8 +282,9 @@ class TeamSettingsView(LoginRequiredMixin, TemplateView):
         if not self.request.user.is_superuser:
             customer = Customer.objects.get(user=self.request.user)
             context['customer'] = customer
-            stripe_customer = stripe.Customer.retrieve(customer.stripe_cust_id)
-            context['card'] = stripe_customer.sources.data[0].last4
+            if not customer.stripe_cust_id == 'free_cust_id':
+                stripe_customer = stripe.Customer.retrieve(customer.stripe_cust_id)
+                context['card'] = stripe_customer.sources.data[0].last4
             context['subscribed_package'] = Subscription.objects.select_related().get(stripe_customer=customer).package
             context['has_user_free_package'] = Subscription.objects.filter(stripe_sub_id="free_plan", stripe_customer__user=self.request.user).exists()
             context['key'] = settings.STRIPE_PUBLISHABLE_KEY
