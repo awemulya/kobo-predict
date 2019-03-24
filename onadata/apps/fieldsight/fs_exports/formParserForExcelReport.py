@@ -27,7 +27,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             parsed_answer[question_name]=answer
 
     def parse_repeat_group( prev_groupname, g_object):
-        question_questions_ = []
+        repeat_questions_ = []
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
             question_name = g_question+"/"+first_children['name']
@@ -45,7 +45,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             else:
                 repeat_questions_.append({'question_name':question_name, 'question_label':question_label})
     
-        return questions
+        return repeat_questions_
 
     def parse_repeat( prev_groupname, g_object, answers):
         
@@ -58,7 +58,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             
 
             if first_children['type'] == 'group':
-                group_question=parse_repeat_group( g_question+"/", first_children)
+                group_questions=parse_repeat_group( g_question+"/", first_children)
                 repeat_questions_.extend(group_questions)
 
 
@@ -73,7 +73,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             
             
         repeat_qa[g_question] = {'questions': repeat_questions_, 'answers': answers}
-        repeat_questions.append({'g_question':repeat_questions})
+        repeat_questions.append({'g_question':repeat_questions_})
 
     def parse_group( prev_groupname, g_object, answers):
        

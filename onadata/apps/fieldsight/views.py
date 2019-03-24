@@ -1754,7 +1754,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
             'organization': organization,
             'total_submissions': line_chart_data.values()[-1],
         }
-        return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
+        return render(request, 'fieldsight/project_summary_report.html', dashboard_data)
 
 
 class SiteSummaryReport(LoginRequiredMixin, TemplateView):
