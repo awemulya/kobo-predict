@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 import dateutil.relativedelta
 
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -12,9 +13,11 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.views.generic import TemplateView
 
 from .models import Customer, Subscription, Invoice, Package
 from onadata.apps.fieldsight.models import Organization
+from onadata.apps.fieldsight.mixins import LoginRequiredMixin
 
 
 @login_required()
@@ -260,3 +263,51 @@ def stripe_webhook(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+
+class TeamSettingsView(LoginRequiredMixin, TemplateView):
+    template_name = 'subscriptions/team_owner.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        organization = get_object_or_404(Organization, id=self.kwargs['org_id'])
+        if request.user == organization.owner:
+            return super(TeamSettingsView, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamSettingsView, self).get_context_data(**kwargs)
+
+        context['organization'] = get_object_or_404(Organization, id=self.kwargs['org_id'])
+        if not self.request.user.is_superuser:
+            customer = Customer.objects.get(user=self.request.user)
+            context['customer'] = customer
+            stripe_customer = stripe.Customer.retrieve(customer.stripe_cust_id)
+            context['card'] = stripe_customer.sources.data[0].last4
+            context['subscribed_package'] = Subscription.objects.select_related().get(stripe_customer=customer).package
+            context['has_user_free_package'] = Subscription.objects.filter(stripe_sub_id="free_plan", stripe_customer__user=self.request.user).exists()
+            context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+
+        return context
+
+
+@login_required
+def update_card(request):
+    if request.method == 'POST':
+        """
+            replace old card with new
+        """
+
+        customer = Customer.objects.get(user=request.user).stripe_cust_id
+
+        stripe.Customer.modify(
+            customer,
+            source=request.POST['stripeToken'],
+        )
+
+        messages.success(request, 'You have been successfully updated your card.')
+    return HttpResponseRedirect(reverse("subscriptions:team_settings", kwargs={'org_id': request.user.organizations.all()[0].pk}))
+
+
+
+

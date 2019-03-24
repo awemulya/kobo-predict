@@ -213,9 +213,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
                                             site__isnull = True,
                                             ended_at__isnull=True)
         key = settings.STRIPE_PUBLISHABLE_KEY
-        # has_user_package = Subscription.objects.filter(stripe_customer__user=self.request.user).values('package').exists()
         has_user_free_package = Subscription.objects.filter(stripe_sub_id="free_plan", stripe_customer__user=self.request.user).exists()
-
+        is_owner = obj.owner == self.request.user
         dashboard_data = {
             'obj': obj,
             'projects': projects,
@@ -235,7 +234,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'roles_org': roles_org,
             'total_submissions': flagged + approved + rejected + outstanding,
             'key': key,
-            'has_user_free_package': has_user_free_package
+            'has_user_free_package': has_user_free_package,
+            'is_owner': is_owner
         }
         return dashboard_data
 
