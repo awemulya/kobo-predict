@@ -20,6 +20,87 @@ from onadata.apps.fieldsight.models import Organization
 from onadata.apps.fieldsight.mixins import LoginRequiredMixin
 
 
+# @login_required()
+# def subscribe_view(request, org_id):
+#     """
+#
+#     :param request:
+#     :param org_id:
+#     : Create stripe customer, subscribed in selected plans using Stripe api
+#     : Store in db
+#
+#     """
+#
+#     if request.method == 'POST':
+#         customer_data = {
+#             'email': request.POST['stripeEmail'],
+#             'description': 'Some Customer Data',
+#             'card': request.POST['stripeToken'],
+#             'metadata': {'username': request.user.username}
+#         }
+#         customer = stripe.Customer.create(**customer_data)
+#         cust = Customer.objects.get(user=request.user)
+#         cust.stripe_cust_id = customer.id
+#         cust.save()
+#         period = request.POST['interval']
+#         if period == 'yearly':
+#             overage_plan = settings.YEARLY_PLANS_OVERRAGE[request.POST['plan_name']]
+#             selected_plan = settings.YEARLY_PLANS[request.POST['plan_name']]
+#         elif period == 'monthly':
+#             overage_plan = settings.MONTHLY_PLANS_OVERRAGE[request.POST['plan_name']]
+#             selected_plan = settings.MONTHLY_PLANS[request.POST['plan_name']]
+#
+#         sub = customer.subscriptions.create(
+#             items=[
+#                     {
+#                        'plan': selected_plan,
+#
+#                     },
+#
+#                     {
+#                         'plan': overage_plan,
+#                     },
+#
+#
+#                   ],
+#
+#         )
+#         organization = get_object_or_404(Organization, id=org_id)
+#
+#         sub_data = {
+#             'stripe_sub_id': sub.id,
+#             'is_active': True,
+#             'initiated_on': datetime.now(),
+#             'package': Package.objects.get(plan=settings.PLANS[selected_plan]),
+#             'organization': Organization.objects.get(id=organization.id)
+#
+#
+#         }
+#         try:
+#             # Subscription.objects.create(**sub_data)
+#             Subscription.objects.filter(stripe_customer=cust, stripe_sub_id="free_plan").update(**sub_data)
+#
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)})
+#
+#     messages.add_message(request, messages.SUCCESS, 'You are subscribed to selected plan')
+#
+#     return HttpResponseRedirect(reverse("users:profile", kwargs={'pk': request.user.pk}))
+
+PLANS = {
+    'starter_plan': 'Starter Plan',
+    'basic_plan': 'Basic Plan',
+    'extended_plan': 'Extended Plan',
+    'pro_plan': 'Pro Plan',
+    'scale_plan': 'Scale Plan'
+}
+
+INTERVAL = {
+    'yearly': 2,
+    'monthly': 1
+}
+
+
 @login_required()
 def subscribe_view(request, org_id):
     """
@@ -32,6 +113,7 @@ def subscribe_view(request, org_id):
     """
 
     if request.method == 'POST':
+
         customer_data = {
             'email': request.POST['stripeEmail'],
             'description': 'Some Customer Data',
@@ -85,7 +167,7 @@ def subscribe_view(request, org_id):
 
     messages.add_message(request, messages.SUCCESS, 'You are subscribed to selected plan')
 
-    return HttpResponseRedirect(reverse("users:profile", kwargs={'pk': request.user.pk}))
+    return HttpResponseRedirect(reverse("subscriptions:profile", kwargs={'pk': request.user.pk}))
 
 
 @csrf_exempt
@@ -263,6 +345,127 @@ def stripe_webhook(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+
+def finish_subscription(request, org_id):
+
+    if request.method == 'POST':
+        organization = get_object_or_404(Organization, id=org_id)
+        customer_data = {
+            'email': request.user.email,
+            'description': 'Some Customer Data',
+            'card': request.POST['stripeToken'],
+            'metadata': {'username': request.user.username}
+        }
+
+        customer = stripe.Customer.create(**customer_data)
+        cust = Customer.objects.get(user=request.user)
+        cust.stripe_cust_id = customer.id
+        cust.save()
+
+        stripe_customer = stripe.Customer.retrieve(cust.stripe_cust_id)
+        card = stripe_customer.sources.data[0].last4
+
+        period = request.POST['interval']
+        plan_name = PLANS[request.POST['plan_name']]
+
+        starting_date = datetime.now().strftime('%A, %B %d, %Y')
+        if period == 'yearly':
+            overage_plan = settings.YEARLY_PLANS_OVERRAGE[request.POST['plan_name']]
+            selected_plan = settings.YEARLY_PLANS[request.POST['plan_name']]
+            package = Package.objects.get(plan=settings.PLANS[selected_plan], period_type=2)
+            ending_date = datetime.now() + dateutil.relativedelta.relativedelta(months=12)
+
+        elif period == 'monthly':
+            overage_plan = settings.MONTHLY_PLANS_OVERRAGE[request.POST['plan_name']]
+            selected_plan = settings.MONTHLY_PLANS[request.POST['plan_name']]
+            package = Package.objects.get(plan=settings.PLANS[selected_plan], period_type=1)
+            ending_date = datetime.now() + dateutil.relativedelta.relativedelta(months=1)
+
+        sub = customer.subscriptions.create(
+            items=[
+                {
+                    'plan': selected_plan,
+
+                },
+
+                {
+                    'plan': overage_plan,
+                },
+
+            ],
+
+        )
+        organization = get_object_or_404(Organization, id=org_id)
+
+        sub_data = {
+            'stripe_sub_id': sub.id,
+            'is_active': True,
+            'initiated_on': datetime.now(),
+            'package': Package.objects.get(plan=settings.PLANS[selected_plan]),
+            'organization': Organization.objects.get(id=organization.id)
+
+        }
+        try:
+            # Subscription.objects.create(**sub_data)
+            Subscription.objects.filter(stripe_customer=cust, stripe_sub_id="free_plan").update(**sub_data)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+        return render(request, 'fieldsight/pricing_step_3.html', {'organization': organization,
+                                                                  'submissions': package.submissions,
+                                                                  'amount': package.total_charge,
+                                                                  'starting_date': starting_date,
+                                                                  'ending_date': ending_date.strftime('%A, %B %d, %Y'),
+                                                                  'card': card,
+                                                                  'plan_name': plan_name,
+                                                                  })
+
+    else:
+        return JsonResponse({'error': 'get method not allowed'})
+
+
+def get_package(request):
+
+    plan = request.GET.get('plan', None)
+    interval = request.GET.get('interval', None)
+
+    period = INTERVAL[interval]
+    selected_plan = PLANS[plan]
+    if interval == 'yearly':
+        ending_date = datetime.now()+dateutil.relativedelta.relativedelta(months=12)
+        submissions = Package.objects.get(plan=settings.PLANS[settings.YEARLY_PLANS[plan]], period_type=period).submissions
+
+    elif interval == 'monthly':
+        ending_date = datetime.now()+dateutil.relativedelta.relativedelta(months=1)
+        submissions = Package.objects.get(plan=settings.PLANS[settings.MONTHLY_PLANS[plan]], period_type=period).submissions
+
+    data = {
+        'selected_plan': selected_plan,
+        'starting_date': datetime.now().strftime('%A, %B %d, %Y'),
+        'ending_date': ending_date.strftime('%A, %B %d, %Y'),
+        'submissions': submissions
+    }
+    return JsonResponse(data)
+
+
+class FinishSubscriptionView(LoginRequiredMixin, TemplateView):
+    template_name = 'fieldsight/pricing_step_3.html'
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     organization = get_object_or_404(Organization, id=self.kwargs['org_id'])
+    #     if request.user == organization.owner:
+    #         return super(FinishSubscriptionView, self).dispatch(request, *args, **kwargs)
+    #
+    #     raise PermissionDenied()
+
+    def get_context_data(self, **kwargs):
+        context = super(FinishSubscriptionView, self).get_context_data(**kwargs)
+
+        context['organization'] = get_object_or_404(Organization, id=self.kwargs['org_id'])
+
+        return context
 
 
 class TeamSettingsView(LoginRequiredMixin, TemplateView):

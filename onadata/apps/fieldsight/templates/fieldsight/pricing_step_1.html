@@ -37,7 +37,7 @@
 
 		  					</div>
 		  					<div class="mp-footer">
-								<button type="button" disabled  class="btn pbg-1 btn-block btn-lg">Selected</button>
+								<button type="button" disabled  class="btn pbg-1 btn-block btn-lg">Subscribed</button>
 
 		  					</div>
 		  				</div>
@@ -61,7 +61,7 @@
 								</ul>
 		  					</div>
 		  					<div class="mp-footer">
-		  						<a href="#" title="" class="btn pbg-2 btn-block btn-lg">Select</a>
+		  						<a data-toggle='collapse' href='#collapseEx1' title="" class="btn pbg-2 btn-block btn-lg plan" id="starter_plan">Select</a>
 		  					</div>
 		  				</div>
 		  			</div>
@@ -85,16 +85,17 @@
 								</ul>
 		  					</div>
 		  					<div class="mp-footer">
-								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-									<input type="hidden" name="plan_name" value="basic_plan"/>
-										<input type="hidden" name="interval" value="monthly"/>
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="basic_plan"/>-->
+										<!--<input type="hidden" name="interval" value="monthly"/>-->
 
-									  {% csrf_token %}
-									{% include 'subscriptions/stripe_checkout.html' %}
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
 
-										<button type="submit"  class="btn pbg-3 btn-block btn-lg">Select</button>
+										<!--<button type="submit"  class="btn pbg-3 btn-block btn-lg">Select</button>-->
+		  						<a data-toggle='collapse' disabled href='#collapseEx2' title="" class="btn pbg-3 btn-block btn-lg plan" id="basic_plan">Select</a>
 
-								</form>
+								<!--</form>-->
 
 		  					</div>
 		  				</div>
@@ -118,15 +119,16 @@
 								</ul>
 		  					</div>
 		  					<div class="mp-footer">
-								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-									<input type="hidden" name="plan_name" value="extended_plan"/>
-									<input type="hidden" name="interval" value="monthly"/>
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="extended_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
 
-									  {% csrf_token %}
-									{% include 'subscriptions/stripe_checkout.html' %}
-									<button type="submit"  class="btn pbg-4 btn-block btn-lg">Select</button>
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit"  class="btn pbg-4 btn-block btn-lg">Select</button>-->
+		  						<a data-toggle='collapse' href='#collapseEx3' title="" class="btn pbg-4 btn-block btn-lg plan" id="extended_plan">Select</a>
 
-								</form>
+								<!--</form>-->
 		  					</div>
 		  				</div>
 		  			</div>
@@ -149,14 +151,16 @@
 								</ul>
 		  					</div>
 		  					<div class="mp-footer">
-								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-									<input type="hidden" name="plan_name" value="pro_plan"/>
-									<input type="hidden" name="interval" value="monthly"/>
-									  {% csrf_token %}
-									{% include 'subscriptions/stripe_checkout.html' %}
-									<button type="submit" class="btn pbg-5 btn-block btn-lg">Select</button>
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="pro_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit" class="btn pbg-5 btn-block btn-lg">Select</button>-->
 
-								</form>
+								<!--</form>-->
+								<a data-toggle='collapse' href='#collapseEx4' title="" class="btn pbg-5 btn-block btn-lg plan" id="pro_plan">Select</a>
+
 		  					</div>
 		  				</div>
 		  			</div>
@@ -179,18 +183,24 @@
 								</ul>
 		  					</div>
 		  					<div class="mp-footer">
-								<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
-									<input type="hidden" name="plan_name" value="scale_plan"/>
-									<input type="hidden" name="interval" value="monthly"/>
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="scale_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
 
-									  {% csrf_token %}
-									{% include 'subscriptions/stripe_checkout.html' %}
-									<button type="submit"  class="btn btn-block pbg-6 btn-lg">Select</button>
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit"  class="btn btn-block pbg-6 btn-lg">Select</button>-->
 
-								</form>
+								<!--</form>-->
+								<a data-toggle='collapse' href='#collapseEx5' title="" class="btn btn-block pbg-6 btn-lg plan" id="scale_plan">Select</a>
+
 		  					</div>
+
 		  				</div>
 		  			</div>
 		  		</div>
+				<div class="text-center mt-4">
+        			<a href="#" title="" class="btn btn-primary btn-next" id="first_next">Next <i class="la la-long-arrow-right"></i></a>
+        		</div>
 			</div>
 		</div>

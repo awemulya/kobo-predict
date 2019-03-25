@@ -9,6 +9,14 @@
 	.radio-div.card{
 		display: none;
 	}
+	.blur{
+	  -webkit-filter: blur(1px); /* Chrome, Safari, Opera */
+	  filter: blur(1px);
+	}
+	a.disabled {
+		pointer-events: none;
+		cursor: default;
+ }
 </style>
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
@@ -22,6 +30,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/organization_projects.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 
     <script>
 
@@ -39,26 +48,46 @@ var org = "{{obj.pk}}";
 
 <!-- choose package popup -->
 <!-- Modal -->
-{% if not request.user.is_superuser%}
-	{% if has_user_free_package  %}
-	<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-xl" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
+		{% if not request.user.is_superuser%}
+			{% if has_user_free_package  %}
+			<div class="modal fade" id="pricingModal1" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-xl" role="document" style="overflow-y: initial !important">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				  </div>
+				  <div class="modal-body" style="max-height: calc(100vh - 200px);overflow-y: auto;">
 
-			{% include 'fieldsight/pricing.html' %}
-		  </div>
-		</div>
-	  </div>
-	</div>
-{% endif %}
-{% endif %}
+					{% include 'fieldsight/pricing_step_1.html' %}
+				  </div>
+				</div>
+			  </div>
+			</div>
+
+			<div class="modal fade" id="pricingModal2" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">
+
+						{% include 'fieldsight/pricing_step_2.html' %}
+
+					  </div>
+					</div>
+				  </div>
+				</div>
+
+
+			{% endif %}
+		{% endif %}
 
 <!-- end choose package !-->
 
@@ -420,12 +449,16 @@ var org = "{{obj.pk}}";
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
 
+
 	<!--<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>-->
 
 
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/demofile.js"></script>
+
   <script type="text/javascript">
+  	 var selected_plan;
+
 
      var static_url ="{{ STATIC_URL }}";
      var data = {{ data|safe}};
@@ -442,14 +475,262 @@ var org = "{{obj.pk}}";
 				console.log(this.value);
 
 			});
+		    var stripe = Stripe('{{key}}');
+    		var elements = stripe.elements();
+
+		  // Create an instance of the card UI component
+			var card = elements.create('card', {
+			  'style': {
+				'base': {
+				  'fontFamily': 'Arial, sans-serif',
+				  'fontSize': '14px',
+				  'color': 'black',
+				},
+				'invalid': {
+				  'color': 'red',
+				},
+			  }
+			});
+
+		// Mount the UI card component into the `card-element` <div>
+		card.mount('#card-element');
+		function stripeTokenHandler(token) {
+		  // Insert the token ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeToken');
+		  hiddenInput.setAttribute('value', token.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+		  form.submit();
+		}
+
+	function createToken() {
+	  stripe.createToken(card).then(function(result) {
+		if (result.error) {
+		  // Inform the user if there was an error
+		  var errorElement = document.getElementById('card-errors');
+		  errorElement.textContent = result.error.message;
+		} else {
+		  // Send the token to your server
+		  stripeTokenHandler(result.token);
+		}
+	  });
+	};
+
+	// Create a token when the form is submitted.
+	var form = document.getElementById('payment-form');
+	form.addEventListener('submit', function(e) {
+	  e.preventDefault();
+	  createToken();
+	});
+
+	card.addEventListener('change', function(event) {
+	  var displayError = document.getElementById('card-errors');
+	  if (event.error) {
+		displayError.textContent = event.error.message;
+	  } else {
+		displayError.textContent = '';
+	  }
+	});
 
 
- 	$('#pricingModal').modal('show');
+ 	$('#pricingModal1').modal('show');
 
     </script>
 	<script>
+	 	$("div[id^='pricingModal']").each(function(){
+				var currentModal = $(this);
+
+				 //click next
+				  currentModal.find('.btn-next').click(function(){
+					currentModal.modal('hide');
+					currentModal.closest("div[id^='pricingModal']").nextAll("div[id^='pricingModal']").first().modal('show');
+				  });
+
+				  //click prev
+				  currentModal.find('.btn-prev').click(function(){
+					currentModal.modal('hide');
+					currentModal.closest("div[id^='pricingModal']").prevAll("div[id^='pricingModal']").first().modal('show');
+				  });
+
+
+				});
+
+
 			$(document).ready(function(){
+
+				//get selected package
+					var plan = [];
+
+					plan.push($(".plan").text().split('S'));
+						if (plan[0].includes("elected")){
+							$("#first_next").removeClass("disabled");
+
+						}
+						else {
+							$("#first_next").addClass("disabled");
+
+
+						}
+
+
+				//toogle
+				$(function() {
+					var btn = $("[href='#collapseEx1']");
+
+					var toggled = false;
+					btn.on("click", function() {
+						if(!toggled)
+						{
+						  toggled = true;
+						  btn.text("Selected");
+							selected_plan = 'starter_plan';
+							$("#basic_plan, #extended_plan, #pro_plan, #scale_plan").addClass("disabled");
+							$("#first_next").removeClass("disabled");
+
+						} else {
+						  toggled = false;
+						  btn.text("Select");
+							selected_plan = '';
+							$("#basic_plan, #extended_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("#first_next").addClass("disabled");
+
+						}
+					});
+				});
+				$(function() {
+					var btn = $("[href='#collapseEx2']");
+					var toggled = false;
+					btn.on("click", function() {
+						if(!toggled)
+						{
+						  toggled = true;
+						  btn.text("Selected");
+							selected_plan = 'basic_plan';
+							$("#starter_plan, #extended_plan, #pro_plan, #scale_plan").addClass("disabled");
+							$("#first_next").removeClass("disabled");
+
+
+
+						} else {
+						  toggled = false;
+						  btn.text("Select");
+							selected_plan = '';
+							$("#starter_plan, #extended_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("#first_next").addClass("disabled");
+
+
+						}
+					});
+				});
+
+				$(function() {
+					var btn = $("[href='#collapseEx3']");
+					var toggled = false;
+					btn.on("click", function() {
+						if(!toggled)
+						{
+						  toggled = true;
+						  btn.text("Selected");
+							selected_plan = 'extended_plan';
+							$("#starter_plan, #basic_plan, #pro_plan, #scale_plan").addClass("disabled");
+							$("#first_next").removeClass("disabled");
+
+
+
+						} else {
+						  toggled = false;
+						  btn.text("Select");
+							selected_plan = '';
+							$("#starter_plan, #basic_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("#first_next").addClass("disabled");
+
+
+						}
+					});
+				});
+
+				$(function() {
+					var btn = $("[href='#collapseEx4']");
+					var toggled = false;
+					btn.on("click", function() {
+						if(!toggled)
+						{
+						  toggled = true;
+						  btn.text("Selected");
+							selected_plan = 'pro_plan';
+							$("#starter_plan, #basic_plan, #extended_plan, #scale_plan").addClass("disabled");
+							$("#first_next").removeClass("disabled");
+
+
+
+						} else {
+						  toggled = false;
+						  btn.text("Select");
+							selected_plan = '';
+							$("#starter_plan, #basic_plan, #extended_plan, #scale_plan").removeClass("disabled");
+							$("#first_next").addClass("disabled");
+
+
+						}
+					});
+				});
+
+				$(function() {
+					var btn = $("[href='#collapseEx5']");
+					var toggled = false;
+					btn.on("click", function() {
+						if(!toggled)
+						{
+						  toggled = true;
+						  btn.text("Selected");
+							selected_plan = 'scale_plan';
+							$("#starter_plan, #basic_plan, #pro_plan, #extended_plan").addClass("disabled");
+							$("#first_next").removeClass("disabled");
+
+
+						} else {
+						  toggled = false;
+						  btn.text("Select");
+							selected_plan = '';
+							$("#starter_plan, #basic_plan, #pro_plan, #extended_plan").removeClass("disabled");
+							$("#first_next").addClass("disabled");
+
+						}
+					});
+				});
+				
+			
 				fn_init_pack();
+
+				$('#first_next').click(function(){
+				var selected_interval=$("input[name='pay-type']:checked").val();
+				$('input[name="plan_name"]').val(selected_plan);
+
+				// get package
+
+				 $.ajax({
+					url: '{% url "subscriptions:get_package" %}',
+					data: {
+					  'plan': selected_plan,
+					  'interval': selected_interval,
+					},
+					dataType: 'json',
+					success: function (data) {
+						$('#submissions').html(data.submissions);
+						$('#starting_date').html(data.starting_date);
+						$('#plan').html(data.selected_plan);
+						$('#ending_date').html(data.ending_date);
+
+
+
+			}
+		  });
+
+				});
 
 
 				$('input[type=radio][name=pay-type]').change(function() {
@@ -487,7 +768,9 @@ var org = "{{obj.pk}}";
 					$(".module-pricing").find('.mp-head h3 sub').text('/Mo');
 				}
 			});
-		</script>
+
+
+	</script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
 {% endblock %}

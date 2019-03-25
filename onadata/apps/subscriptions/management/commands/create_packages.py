@@ -55,12 +55,12 @@ class Command(BaseCommand):
             ,
             9:
                 {'Starter Monthly':
-                     {'submission': 4, 'extra_submissions_charge': 0.35, 'total_charge': 50, 'period_type': 1}
+                     {'submission': 3, 'extra_submissions_charge': 0.3, 'total_charge': 50, 'period_type': 1}
                  }
             ,
             10:
                 {'Starter Yearly':
-                     {'submission': 4, 'extra_submissions_charge': 0.35, 'total_charge': 50, 'period_type': 2}
+                     {'submission': 4, 'extra_submissions_charge': 0.29, 'total_charge': 75, 'period_type': 2}
                  }
 
 
