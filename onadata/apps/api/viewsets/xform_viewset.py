@@ -17,6 +17,7 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
+from onadata.apps.fsforms.models import XformHistory
 from onadata.apps.fsforms.tasks import post_update_xform
 from onadata.libs import filters
 from onadata.libs.mixins.anonymous_user_public_forms_mixin import (
@@ -804,7 +805,11 @@ data (instance/submission per row)
                 else:
                     # Something odd; hopefully it can be coerced into a string
                     raise exceptions.ParseError(detail=survey)
-            post_update_xform.apply_async((), {'xform_id': existing_xform.id, 'user':request.user.id}, countdown=2)
+
+            xf, created = XformHistory.objects.get_or_create(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
+                              description=existing_xform.description, xml=existing_xform.xml,
+                              id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
+            post_update_xform.apply_async((), {'xform_id': pk, 'user': request.user.id}, countdown=2)
 
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
