@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import time
+import re 
 import os
 import json
 import datetime
@@ -55,42 +56,52 @@ from onadata.apps.fsforms.tasks import clone_form
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+def cleanhtml(raw_html):
+   cleanr = re.compile('<\S.*?>')
+   cleantext = re.sub(cleanr, '', raw_html)
+   return cleantext
+   
 class DriveException(Exception):
     pass
 
-def upload_to_drive(file_path, title, folder, project):
+def upload_to_drive(file_path, title, folder_title, project):
     # pass
     """ TODO: folder names of 'Site Details' and 'Site Progress' must be in google drive."""
     try:
         gauth = GoogleAuth()
         drive = GoogleDrive(gauth)
 
-        folders = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()
+        folders = drive.ListFile({'q':"title = '"+ folder_title +"'"}).GetList()
         
         if folders:
             folder_id = folders[0]['id']
         else:
-            folder_metadata = {'title' : folder, 'mimeType' : 'application/vnd.google-apps.folder'}
-            folder = drive.CreateFile(folder_metadata)
-            folder.Upload()            
-            folder_id = folder['id']
+            folder_metadata = {'title' : folder_title, 'mimeType' : 'application/vnd.google-apps.folder'}
+            new_folder = drive.CreateFile(folder_metadata)
+            new_folder.Upload()            
+            folder_id = new_folder['id']
         
         file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
         if not file:    
-            file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+            new_file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+            new_file.SetContentFile(file_path)
+            new_file.Upload({'convert':True})
+            file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()[0]
+
         else:
             file = file[0]
-
-        file.SetContentFile(file_path)
-        file.Upload({'convert':True})    
-        gsuit_meta = project.gsuit_meta
-        gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
-        project.gsuit_meta = gsuit_meta
-        project.save()
+            file.SetContentFile(file_path)
+            file.Upload({'convert':True})
+        
+        _project = Project.objects.get(pk=project.id) 
+        gsuit_meta = _project.gsuit_meta
+        gsuit_meta[folder_title] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
+        _project.gsuit_meta = gsuit_meta
+        _project.save()
         permissions = file.GetPermissions()
 
-        user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
+        user_emails = _project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
         
         all_users = set(user_emails)
 
@@ -986,14 +997,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
             form_names.append(form_name)
             occurance = form_names.count(form_name)
 
-            if occurance > 1 and len(form_name) > 25:
-                sheet_name = form_name[:25] + ".." + "(" +str(occurance)+ ")"
-            elif occurance > 1 and len(form_name) < 25:
-                sheet_name = form_name + "(" +str(occurance)+ ")"
-            elif len(form_name) > 29:
-                sheet_name = form_name[:29] + ".."
-            else:
-                sheet_name = form_name
+            sheet_name = form_name[:30]
             
             for ch in ["[", "]", "*", "?", ":", "/"]:
                 if ch in sheet_name:
@@ -1036,7 +1040,11 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                     ws.append(row)
 
             for col_num in range(len(head_columns)):
-                ws.cell(row=1, column=col_num+1).value = head_columns[col_num].get('question_label', "")
+                if isinstance(head_columns[col_num].get('question_label', ""), dict):
+                    head_str = head_columns[col_num]['question_label'].get('English (en)', str(head_columns[col_num]['question_label']))
+                else:
+                    head_str = head_columns[col_num]['question_label']
+                ws.cell(row=1, column=col_num+1).value = cleanhtml(head_str)
             
             
             if repeat_answers:
@@ -1060,7 +1068,12 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
                     #for loop needed.
                     for col_num in range(len(group['questions'])):
-                        wr.cell(row=1, column=col_num+3).value = group['questions'][col_num]['question_label']
+                        if isinstance(group['questions'][col_num]['question_label'], dict):
+                            head_str = group['questions'][col_num]['question_label'].get('English (en)', str(group['questions'][col_num]['question_label']))
+                        else:
+                            head_str = group['questions'][col_num]['question_label']
+                    
+                        wr.cell(row=1, column=col_num+3).value = cleanhtml(head_str)
                         
 
         if not forms:

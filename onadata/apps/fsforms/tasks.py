@@ -119,11 +119,6 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
 def post_update_xform(xform_id, user):
     existing_xform = XForm.objects.get(pk=xform_id)
     user = User.objects.get(pk=user)
-    xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
-                      description=existing_xform.description, xml=existing_xform.xml,
-                      id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
-    xf.save()
-
     existing_xform.logs.create(source=user, type=20, title="Kobo form Updated",
                                 description="update kobo form ")
 
