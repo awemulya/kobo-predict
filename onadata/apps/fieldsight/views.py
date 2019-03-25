@@ -1791,8 +1791,11 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
         organization = Organization.objects.get(pk=obj.organization_id)
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
         project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
-
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        if obj.sites.filter(is_active=True, is_survey=False).count() <= 1000:
+            sites = obj.sites.filter(is_active=True, is_survey=False)    
+        else:
+            sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
@@ -1809,7 +1812,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
             'peoples_involved': peoples_involved,
             'total_sites': total_sites,
             'total_survey_sites': total_survey_sites,
-            'outstanding': outstanding,
+            'pending': outstanding,
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
@@ -1822,7 +1825,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
             'organization': organization,
             'total_submissions': line_chart_data.values()[-1],
         }
-        return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
+        return render(request, 'fieldsight/project_summary_report.html', dashboard_data)
 
 
 class SiteSummaryReport(LoginRequiredMixin, TemplateView):
@@ -1840,6 +1843,12 @@ class SiteSummaryReport(LoginRequiredMixin, TemplateView):
 
         outstanding, flagged, approved, rejected = obj.get_site_submission()
 
+
+        recent_resp_imgs = get_images_for_site(obj.pk)
+        three_recent_imgs = list(recent_resp_imgs["result"])[:2]
+
+
+
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
@@ -1853,10 +1862,12 @@ class SiteSummaryReport(LoginRequiredMixin, TemplateView):
             'project': project,
             'supervisor' : supervisor,
             'reviewer' : reviewer,
+            'metas': generateSiteMetaAttribs(pk),
+            'recent_images': three_recent_imgs,
             'total_submissions': line_chart_data.values()[-1],
 
         }
-        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+        return render(request, 'fieldsight/site_summary_report.html', dashboard_data)
 
 
 class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):

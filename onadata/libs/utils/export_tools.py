@@ -813,7 +813,14 @@ def generate_export(export_type, extension, username, id_string,
             temporarylocation="media/forms/submissions_{}.xls".format(id_string)
             import shutil
             shutil.copy(temp_file.name, temporarylocation)
-            upload_to_drive(temporarylocation, 'report_'+id_string, id_string, FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid']).project)
+            fxf_form = FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid'])
+            if fxf_form.schedule:
+                name = fxf_form.schedule.name
+            elif fxf_form.stage:
+                name = fxf_form.stage.name
+            else:
+                name = fxf_form.xf.title
+            upload_to_drive(temporarylocation, name+'_'+id_string, str(fxf_form.id)+'_'+name+'_'+id_string, fxf_form.project)
         
             os.remove(temporarylocation)
         
