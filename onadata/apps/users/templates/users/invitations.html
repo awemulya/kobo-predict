@@ -10,73 +10,77 @@
         <![endif]-->
 
 			<div id="main-content" class="padding">
-				<div class="row">
-					{% if invitations %}
-					<div class="col-md-4">
-						<section class="panel">
-		                    <header class="panel-heading clearfix">
-		                        <h3><i class="la la-envelope-o"></i>Invitations</h3>
+				{% if not has_org %}
+					<div class="row">
+						{% if invitations %}
+						<div class="col-md-4">
+							<section class="panel">
+								<header class="panel-heading clearfix">
+									<h3><i class="la la-envelope-o"></i>Invitations</h3>
 
-		                    </header>
-							<div class="panel-body">
-								<p class="margin-top">
-									You have been invited to join FieldSight. You may Accept or Decline each invitations or Accept all the invitations as per required.
-								</p>
-								<a href="{% url 'users:accept_all' request.user.username %}" title="" class="btn btn-primary btn-sm btn-xs mt-2"><i class="la la-check"></i> Accept All</a>
-								{% for item in invitations %}
-									<div class="project-item-wrap margin-top clearfix">
-										<div class="project-logo">
-											<img src="{% static 'dummy/assets/img/logo-org1.jpg' %}" alt="" width="50" height="50">
-										</div>
-										<div class="project-basic-info">
-											<h4>{{ item.organization }}</h4>
-											<p>
-												{{ item.organization.address }}<br/>
-												By <a href="#" title="">{{ item.by_user.first_name }}&nbsp;{{ item.by_user.last_name }}</a>
-												{% if item.group.name != "Unassigned" %}
-													as {{ item.group.name }}
-												{% endif %}
-												{% if item.site.all %}
-													{% if invite.site.all|length == 1 %}
-														for {{ item.site.all.0.name }}
-													{% else %}
-														for {{ item.site.all|length }} sites
-													{% endif %} in {{ item.project.all.0.name }} of {{ item.organization.name }}
-												{% elif item.project.all|length %}
-													{% if item.project.all|length == 1%}
-														for {{ item.project.all.0.name }}
-													{% else %}
-														for {{ item.project.all|length }} projects
+								</header>
+								<div class="panel-body">
+									<p class="margin-top">
+										You have been invited to join FieldSight. You may Accept or Decline each invitations or Accept all the invitations as per required.
+									</p>
+									<a href="{% url 'users:accept_all' request.user.username %}" title="" class="btn btn-primary btn-sm btn-xs mt-2"><i class="la la-check"></i> Accept All</a>
+									{% for item in invitations %}
+										<div class="project-item-wrap margin-top clearfix">
+											<div class="project-logo">
+												<img src="{% static 'dummy/assets/img/logo-org1.jpg' %}" alt="" width="50" height="50">
+											</div>
+											<div class="project-basic-info">
+												<h4>{{ item.organization }}</h4>
+												<p>
+													{{ item.organization.address }}<br/>
+													By <a href="#" title="">{{ item.by_user.first_name }}&nbsp;{{ item.by_user.last_name }}</a>
+													{% if item.group.name != "Unassigned" %}
+														as {{ item.group.name }}
 													{% endif %}
-													of {{ item.organization.name }}
-												{% elif item.organization %}
-													in {{ item.organization.name }}
-												{% endif %}.
-											</p>
+													{% if item.site.all %}
+														{% if invite.site.all|length == 1 %}
+															for {{ item.site.all.0.name }}
+														{% else %}
+															for {{ item.site.all|length }} sites
+														{% endif %} in {{ item.project.all.0.name }} of {{ item.organization.name }}
+													{% elif item.project.all|length %}
+														{% if item.project.all|length == 1%}
+															for {{ item.project.all.0.name }}
+														{% else %}
+															for {{ item.project.all|length }} projects
+														{% endif %}
+														of {{ item.organization.name }}
+													{% elif item.organization %}
+														in {{ item.organization.name }}
+													{% endif %}.
+												</p>
+											</div>
+											<a href="{% url 'users:accept_invitation' item.pk request.user.username %}" title="" class="btn btn-primary btn-sm btn-xs mt-2 mr-2"><i class="la la-check"></i> Accept</a>
+
+											<a href="{% url 'users:decline_invitation' item.pk request.user.username %}" title="" class="btn btn-light btn-sm btn-xs mt-2"><i class="la la-close"></i> Reject</a>
 										</div>
-										<a href="{% url 'users:accept_invitation' item.pk request.user.username %}" title="" class="btn btn-primary btn-sm btn-xs mt-2 mr-2"><i class="la la-check"></i> Accept</a>
-
-										<a href="{% url 'users:decline_invitation' item.pk request.user.username %}" title="" class="btn btn-light btn-sm btn-xs mt-2"><i class="la la-close"></i> Reject</a>
-									</div>
-								{% endfor %}
-							</div>
-						</section>
-					</div>
-					{% endif %}
-					<div class="col-md-8">
-						<section class="panel">
-		                    <header class="panel-heading clearfix">
-		                        <h3><i class="la la-building"></i>Organizations</h3>
-		                    </header>
-							<div class="panel-body">
-								<div class="panel-heading">
-									<a href="{% url 'fieldsight:organization-add' %}" title="" class="btn 	btn-primary "><i class="la la-plus"></i> Add Your Organization</a>
+									{% endfor %}
 								</div>
-							</div>
-		                </section>
-					</div>
+							</section>
+						</div>
+						{% endif %}
+						<div class="col-md-8">
+							<section class="panel">
+								<header class="panel-heading clearfix">
+									<h3><i class="la la-building"></i>Organizations</h3>
+								</header>
+								<div class="panel-body">
+									<div class="panel-heading">
+										<a href="{% url 'fieldsight:organization-add' %}" title="" class="btn 	btn-primary "><i class="la la-plus"></i> Add Your Organization</a>
+									</div>
+								</div>
+							</section>
+						</div>
 
-				</div>
+					</div>
+					{% else %}
+					<p>You do not have invitations.</p>
+				{% endif %}
 			</div>
 		<script src="assets/js/vendor/jquery.matchHeight.js"></script>
         <script src="assets/js/plugins.js"></script>
