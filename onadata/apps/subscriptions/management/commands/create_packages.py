@@ -6,61 +6,61 @@ class Command(BaseCommand):
     help = 'Create default packages'
 
     def handle(self, *args, **options):
-
+        
         PLAN_CHOICES = {
             0:
                  {'Free':
-                      {'submission': 3, 'extra_submissions_charge': 0, 'total_charge': 0, 'period_type': 0}
+                      {'submission': 250, 'extra_submissions_charge': 0, 'total_charge': 0, 'period_type': 0}
                   }
              ,
             1:
-                 {'Basic Monthly':
-                      {'submission': 5, 'extra_submissions_charge': 0.25, 'total_charge': 100, 'period_type': 1}
+                 {'Basic Monthly Plan':
+                      {'submission': 500, 'extra_submissions_charge': 0.2, 'total_charge': 100, 'period_type': 1}
                   }
              ,
             2:
-                 {'Basic Yearly':
-                      {'submission': 10, 'extra_submissions_charge': 0.25, 'total_charge': 200, 'period_type': 2}
+                 {'Basic Yearly Plan':
+                      {'submission': 6000, 'extra_submissions_charge': 0.25, 'total_charge': 1000, 'period_type': 2}
                   }
              ,
             3:
-                 {'Extended Monthly':
-                      {'submission': 15, 'extra_submissions_charge': 0.22, 'total_charge': 300, 'period_type': 1}
+                 {'Extended Monthly Plan':
+                      {'submission': 2500, 'extra_submissions_charge': 0.22, 'total_charge': 500, 'period_type': 1}
                   }
              ,
             4:
-                 {'Extended Yearly':
-                      {'submission': 20, 'extra_submissions_charge': 0.22, 'total_charge': 400, 'period_type': 2}
+                 {'Extended Yearly Plan':
+                      {'submission': 30000, 'extra_submissions_charge': 0.22, 'total_charge': 5000, 'period_type': 2}
                   }
              ,
             5:
-                 {'Pro Monthly':
-                      {'submission': 25, 'extra_submissions_charge': 0.2, 'total_charge': 500, 'period_type': 1}
+                 {'Pro Monthly Plan':
+                      {'submission': 5000, 'extra_submissions_charge': 0.2, 'total_charge': 1000, 'period_type': 1}
                   }
              ,
             6:
-                 {'Pro Yearly':
-                      {'submission': 30, 'extra_submissions_charge': 0.2, 'total_charge': 600, 'period_type': 2}
+                 {'Pro Yearly Plan':
+                      {'submission': 60000, 'extra_submissions_charge': 0.2, 'total_charge': 10000, 'period_type': 2}
                   }
              ,
             7:
-                 {'Scale Monthly':
-                      {'submission': 35, 'extra_submissions_charge': 0.15, 'total_charge': 700, 'period_type': 1}
+                 {'Scale Monthly Plan':
+                      {'submission': 15000, 'extra_submissions_charge': 0.15, 'total_charge': 3000, 'period_type': 1}
                   }
              ,
             8:
-                 {'Scale Yearly':
+                 {'Scale Yearly Plan':
                       {'submission': 40, 'extra_submissions_charge': 0.15, 'total_charge': 800, 'period_type': 2}
                   }
             ,
             9:
-                {'Starter Monthly':
-                     {'submission': 3, 'extra_submissions_charge': 0.3, 'total_charge': 50, 'period_type': 1}
+                {'Starter Monthly Plan':
+                     {'submission': 100, 'extra_submissions_charge': 0.25, 'total_charge': 20, 'period_type': 1}
                  }
             ,
             10:
-                {'Starter Yearly':
-                     {'submission': 4, 'extra_submissions_charge': 0.29, 'total_charge': 75, 'period_type': 2}
+                {'Starter Yearly Plan':
+                     {'submission': 1200, 'extra_submissions_charge': 0.25, 'total_charge': 200, 'period_type': 2}
                  }
 
 
