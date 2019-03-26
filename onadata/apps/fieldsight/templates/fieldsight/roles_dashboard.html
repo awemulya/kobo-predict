@@ -392,44 +392,21 @@
         {% endif %}
 
         {% if unassigned %}
+                    <div class="col-md-8">
+						<section class="panel">
+		                    <header class="panel-heading clearfix">
+		                    </header>
+							<div class="panel-body">
+								<div class="panel-heading">
+                                  You do not have any roles.<a href="{% url 'users:view_invitations' request.user.pk %}"> Please View your invitations</a>
 
-        <div class="row">
-            <div class="col-md-4 col-lg-4">
-
-                <div class="widget-info margin-top bg-white padding">
-
-                    <div class="widget-body">
-                        <a href="{% url 'fieldsight:organization-add' %}" title="" class="btn btn-sm btn-primary"><i
-                                class="la la-plus"></i> Add New Organization</a>
+								</div>
+							</div>
+		                </section>
+					</div>
 
 
-                    </div>
 
-                </div>
-
-            </div>
-            <div class="col-md-2 col-lg-2">
-               <p style="text-align:center; margin-top:30px">OR</p>
-            </div>
-            <div class="col-md-4 col-lg-4">
-                <div class="widget-info margin-top bg-white padding">
-
-                    <div class="widget-body">
-                        <form method="GET" action="{% url 'fieldsight:request-search-org-list' %}">
-
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="q" placeholder="Request an organization..." value='{{ request.GET.q }}'
-                                       autofocus="">
-                                <span class="input-group-btn">
-                                                  <button class="btn btn-primary" value="Search"><i
-                                                          class="la la-search"></i> Search</button>
-                                              </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         {% endif %}
 
 
