@@ -384,9 +384,11 @@ class UsersListView(TemplateView, SuperAdminMixin):
 
 class ViewInvitations(LoginRequiredMixin, TemplateView):
     template_name = "users/invitations.html"
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             user = User.objects.get(pk=kwargs.get('pk'))
+
             if request.user == user:
                 return super(ViewInvitations, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
@@ -395,6 +397,7 @@ class ViewInvitations(LoginRequiredMixin, TemplateView):
         context = super(ViewInvitations, self).get_context_data(*args, **kwargs)
 
         email = User.objects.values('email').get(pk=kwargs.get('pk'))
+        context['has_org'] = Organization.objects.filter(owner=self.request.user).exists()
         context['invitations'] = UserInvite.objects.filter(email=email['email'], is_used=False, is_declied=False)
         return context
 
