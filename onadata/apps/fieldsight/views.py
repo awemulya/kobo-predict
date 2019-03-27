@@ -2134,6 +2134,7 @@ class RegionCreateView(RegionView, ProjectRoleMixin, CreateView):
             form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
         
         existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
+
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
 
@@ -2215,8 +2216,6 @@ class RegionUpdateView(RegionView, RegionRoleMixin, UpdateView):
             context['current_identifier'] = idfs[len(idfs)-1]
         return context
 
-    
-
     def form_valid(self, form):
         def replace_idfs(region, previous_identifier, new_identifier):
             identifier = region.identifier
@@ -2235,9 +2234,11 @@ class RegionUpdateView(RegionView, RegionRoleMixin, UpdateView):
             parent_identifier = self.object.parent.get_concat_identifier()
             form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
 
-        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
-        if existing_identifier:
-            messages.add_message(self.request, messages.INFO, 'Your identifier "'+ form.cleaned_data.get('identifier') +'" conflict with existing region please use different identifier to create region')
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.object.project.id)
+        check_identifier = previous_identifier == form.cleaned_data.get('identifier')
+
+        if not check_identifier and existing_identifier:
+            messages.add_message(self.request, messages.INFO, 'Your identifier "'+ form.cleaned_data.get('identifier') +'" conflict with existing region please use different identifier to update region')
             return HttpResponseRedirect(reverse(
                 'fieldsight:region-update',
                 kwargs={
