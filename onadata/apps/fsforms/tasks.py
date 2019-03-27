@@ -170,7 +170,7 @@ def clone_form(user, project, task_id):
     clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_1['id_string'], token, task_id, settings.DEFAULT_FORM_1['name'])
     if clone3:
         xf3 = XForm.objects.get(id_string=id_string3, user=user)
-        schedule2, created2 = Schedule.objects.get_or_create(name=settings.DEFAULT_FORM_1['name'], project=project)
+        schedule2, created2 = Schedule.objects.get_or_create(name=settings.DEFAULT_FORM_1['name'], project=project, schedule_level_id=1)
         fxf3, created = FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True,
                                                            schedule=schedule2, is_deployed=True)
     else:
