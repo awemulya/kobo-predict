@@ -12,7 +12,9 @@ PLAN_CHOICES = (
     (5, 'Pro Monthly'),
     (6, 'Pro Yearly'),
     (7, 'Scale Monthly'),
-    (8, 'Scale Yearly')
+    (8, 'Scale Yearly'),
+    (9, 'Starter Monthly'),
+    (10, 'Starter Yearly')
 
 )
 
