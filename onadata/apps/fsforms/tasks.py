@@ -127,7 +127,6 @@ def post_update_xform(xform_id, user):
 
 @shared_task(max_retries=5)
 def clone_form(user, project, task_id):
-    name = "Daily Site Diary - Default Form"
     token = user.auth_token.key
 
     #general clone
@@ -168,11 +167,12 @@ def clone_form(user, project, task_id):
         # email.send()
         pass
 
-    clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_3['id_string'], token, task_id, settings.DEFAULT_FORM_3['name'])
+    clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_1['id_string'], token, task_id, settings.DEFAULT_FORM_3['name'])
     if clone3:
         xf3 = XForm.objects.get(id_string=id_string3, user=user)
-        schedule, created = Schedule.objects.get_or_create(name =settings.DEFAULT_FORM_3['name'], project=project)
-        fxf2, created = FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True, schedule=schedule)
+        schedule2, created2 = Schedule.objects.get_or_create(name=settings.DEFAULT_FORM_1['name'], project=project)
+        fxf3, created = FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True,
+                                                           schedule=schedule2)
     else:
         # send email to admins for unsuccessful form clone or deployment
         # task_obj = CeleryTaskProgress.objects.get(id=task_id)

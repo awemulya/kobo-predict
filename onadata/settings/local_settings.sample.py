@@ -88,13 +88,14 @@ SESSION_COOKIE_DOMAIN = 'localhost'
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 
 
-DEFAULT_FORM_1 = {
+
+DEFAULT_FORM_2 = {
     'id_string': 'atYfmSxxyCZhKb7gDHU4wt',
     'name': 'Daily Site Diary - Default Form',
     'type':'schedule '
 }
 
-DEFAULT_FORM_2 = {
+DEFAULT_FORM_1 = {
     'id_string': 'ahLRXcGG23uNkKYCm6empb',
     'name': 'Health, Safety, Social and Environmental Inspection Report - Default Form',
     'type':'schedule '
