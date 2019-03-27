@@ -4,6 +4,7 @@ from celery import shared_task
 from django.contrib.auth.models import User
 
 from django.db import transaction
+from django.conf import settings
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEvent, XformHistory
@@ -12,6 +13,9 @@ from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormLi
 from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bulk_message_stage_deployed_project, \
     send_bulk_message_stages_deployed_project, send_message_un_deploy_project, send_message_koboform_updated
 from onadata.apps.logger.models import XForm
+from onadata.apps.eventlog.models import CeleryTaskProgress
+from onadata.libs.utils.fieldsight_tools import clone_kpi_form
+from django.core.mail import EmailMessage
 
 
 @shared_task(max_retries=10, soft_time_limit=4200)
@@ -115,15 +119,73 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
 def post_update_xform(xform_id, user):
     existing_xform = XForm.objects.get(pk=xform_id)
     user = User.objects.get(pk=user)
-    xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
-                      description=existing_xform.description, xml=existing_xform.xml,
-                      id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
-    xf.save()
-
     existing_xform.logs.create(source=user, type=20, title="Kobo form Updated",
                                 description="update kobo form ")
 
     send_message_koboform_updated(existing_xform)
+
+
+@shared_task(max_retries=5)
+def clone_form(user, project, task_id):
+    token = user.auth_token.key
+
+    #general clone
+
+    clone1, id_string1 = clone_kpi_form(settings.DEFAULT_FORM_3['id_string'], token, task_id, settings.DEFAULT_FORM_3['name'])
+    if clone1:
+        xf = XForm.objects.get(id_string=id_string1, user=user)
+        fxf, created = FieldSightXF.objects.get_or_create(xf=xf, project=project, is_deployed=True)
+    else:
+        # send email to admins for unsuccessful form clone or deployment
+        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
+        # to_email = ''
+        # mail_subject = 'Error in deploying and cloning form'
+        # for key, value in task_obj.other_fields.items():
+        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
+        # email = EmailMessage(
+        #     mail_subject, message, to=[to_email]
+        # )
+        # email.send()
+        pass
+
+    #schedule 1
+    clone2, id_string2 = clone_kpi_form(settings.DEFAULT_FORM_2['id_string'], token, task_id, settings.DEFAULT_FORM_2['name'])
+    if clone2:
+        xf2 = XForm.objects.get(id_string=id_string2, user=user)
+        schedule, created = Schedule.objects.get_or_create(name =settings.DEFAULT_FORM_2['name'], project=project)
+        fxf2, created = FieldSightXF.objects.get_or_create(xf=xf2, project=project, is_scheduled=True, schedule=schedule, is_deployed=True)
+    else:
+        # send email to admins for unsuccessful form clone or deployment
+        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
+        # to_email = ''
+        # mail_subject = 'Error in deploying and cloning form'
+        # for key, value in task_obj.other_fields.items():
+        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
+        # email = EmailMessage(
+        #     mail_subject, message, to=[to_email]
+        # )
+        # email.send()
+        pass
+
+    clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_1['id_string'], token, task_id, settings.DEFAULT_FORM_1['name'])
+    if clone3:
+        xf3 = XForm.objects.get(id_string=id_string3, user=user)
+        schedule2, created2 = Schedule.objects.get_or_create(name=settings.DEFAULT_FORM_1['name'], project=project, schedule_level_id=1)
+        fxf3, created = FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True,
+                                                           schedule=schedule2, is_deployed=True)
+    else:
+        # send email to admins for unsuccessful form clone or deployment
+        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
+        # to_email = ''
+        # mail_subject = 'Error in deploying and cloning form'
+        # for key, value in task_obj.other_fields.items():
+        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
+        # email = EmailMessage(
+        #     mail_subject, message, to=[to_email]
+        # )
+        # email.send()
+        pass
+
 
 # @shared_task(max_retries=10)
 # def copy_to_sites(fxf):

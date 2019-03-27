@@ -1,0 +1,118 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+
+{% load i18n staticfiles %}
+{% load filters %}
+{%block extracss %}
+<style type="text/css">
+	.leaflet-bottom.leaflet-right{
+		display:none;
+	}
+	.radio-div.card{
+		display: none;
+	}
+</style>
+    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+
+{% endblock %}
+
+{%block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/organization_projects.js"></script>
+
+    <script>
+
+$(document).ready(function() {
+var org = "{{obj.pk}}";
+ vm = new SitesViewModel(org);
+ ko.applyBindings(vm);
+});
+
+    </script>
+
+{% endblock %}
+{% block content %}
+<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="pricingModalLabel">Payment Details</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">
+
+							<div class="bg-primary p-4">
+								<div class="bg-light p-4 m-4">
+									<div class="pb-2"></div>
+									<h6 class="text-center mt-4"><strong>Thank you for signing up with FieldSight!</strong></h6>
+									<h5 class="text-center mt-2 mb-3"><strong>You have selected the {{plan_name}}</strong></h5>
+									<p class="text-center mb-4 text-xlight">FieldSight subscription fees are charged at the start of delivering service and renew automatically.</p>
+									<div class="row">
+										<div class="col-md-4">
+											<h6 class="mt-4"><strong>Plan Detail :</strong></h6>
+											<ul class="list-icon mt-4 mb-4">
+												<li><i class="la la-chevron-circle-right"></i><strong>{{submissions}}</strong> Submissions</li>
+												<li><i class="la la-chevron-circle-right"></i><strong>Unlimited </strong> Users, Projects & Sites </li>
+												<li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+												<li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+												<li><i class="la la-chevron-circle-right"></i><strong>Access</strong> to our Android App</li>
+
+											</ul>
+										</div>
+										<div class="col-md-4">
+											<h6 class="mt-4"><strong>Plan Period :</strong></h6>
+											<ul class="list-icon mt-4 mb-4">
+												<li>
+													<i class="la la-calendar-check-o"></i>
+													<strong>Starting Date</strong>
+													<p>{{starting_date}}</p>
+												</li>
+												<li>
+													<i class="la la-calendar-minus-o"></i>
+													<strong>Ending Date</strong>
+													<p>{{ending_date}}</p>
+												</li>
+											</ul>
+										</div>
+										<div class="col-md-4">
+											<h6 class="mt-4"><strong>Payment Detail :</strong></h6>
+											<ul class="list-icon mt-4 mb-4">
+												<li>
+													<i class="la la-money"></i>
+													<strong>Amount Paid</strong>
+													<p>${{amount}}</p>
+												</li>
+												<li>
+													<i class="la la-cc-mastercard"></i>
+													<strong>Payment Method</strong>
+													<p>Card: xxx xxx xxx {{card}}</p>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<div class="text-center">
+										<a href="{% url 'fieldsight:organizations-dashboard' organization.pk %}" title="" class="btn btn-primary">Start Using FieldSight <i class="la la-long-arrow-right"></i></a>
+									</div>
+								</div>
+							</div>
+						   </div>
+					</div>
+				  </div>
+				</div>
+
+{% endblock %}
+
+{%block extrascript %}
+
+  <script type="text/javascript">
+
+ 	$('#pricingModal').modal('show');
+
+    </script>
+{% endblock %}

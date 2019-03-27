@@ -1,0 +1,104 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+
+			<div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+                    {% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' organization.id %}">{{organization}}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Team Settings</li>
+
+					 </ol>
+                    {% endblock %}
+				</nav>
+				<section class="panel">
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+                          <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+                        </div>
+                    {% endfor %}
+				{% endif %}
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'Team' %} {% trans 'Settings' %}</h3>
+
+
+                    </header>
+					<div class="panel-body">
+						<div class="container">
+                          <div class="row">
+                            <div class="col-sm">
+                              <h6>Account Information</h6>
+                                <p>
+                                    Email: {{customer.user.email}}
+                                </p>
+
+                                {% if not has_user_free_package %}
+                                <p>Card: **** **** **** {{card}}</p>
+
+                                <form action="{% url 'subscriptions:update_card' %}" method="post">
+									  {% csrf_token %}
+									<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="{{ key }}"
+                                        data-description="Update Your Card"
+                                        data-email="{{request.user.email}}"
+
+                                        data-locale="auto" data-label="Update" data-panel-label="Update">
+                                    </script>
+									<button type="submit" class="btn btn-primary pull-left">Update Your Card</button>
+
+								</form>
+
+
+                                </p>
+
+                                {% endif %}
+                            </div>
+                            <div class="col-sm">
+                                <h6>Subscribed Package</h6>
+                                <p>Plan: {{subscribed_package.get_plan_display}}</p>
+                                <p>Total Submissions: {{subscribed_package.submissions}}</p>
+
+                                {% if not has_user_free_package %}
+                                    <p>Total Charge: ${{subscribed_package.total_charge}}/{{subscribed_package.get_period_type_display}}</p>
+                                    <p>Extra charge per submission: ${{subscribed_package.extra_submissions_charge}}</p>
+                                {% endif %}
+
+                                {% if not has_user_free_package %}
+                                    <p>Unlimited Users, Projects, Sites</p>
+                                 {% else %}
+                                    <p>15 Users, 2 Projects, 10 Sites</p>
+                                {% endif %}
+
+                                    <p>Unlimited Forms, Stages & Schedules</p>
+                                    <p>Unlimited Reports, Dashboards & Maps</p>
+                                {% if has_user_free_package %}
+
+                                    <p><a href="{% url 'fieldsight:organizations-dashboard' organization.id%}" class="btn btn-sm btn-primary">Upgrade Your Package</a></p>
+                                {% endif %}
+                            </div>
+
+                          </div>
+                        </div>
+
+					</div>
+
+
+                </section>
+
+			</div>
+{% endblock %}
+{%block extrascript %}
+
+<script>
+    var totalSItems = document.getElementsByClassName("stripe-button-el");
+
+			for(i = 0; i<totalSItems.length; i++){
+				totalSItems[i].style.display = 'none';
+			}
+</script>
+{% endblock %}
+
+

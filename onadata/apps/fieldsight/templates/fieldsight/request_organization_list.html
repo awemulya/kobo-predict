@@ -1,0 +1,45 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+
+		<div id="main-content" class="padding">
+			{% block breadcrumbs %}
+			{% endblock %}
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Organization' %}{% endblock %}</h3>
+
+                    </header>
+					<div class="panel-body">
+						<!--Organization Listing-->
+						<div class="row">
+							{% for obj in org %}
+							<div class="col-md-4 col-sm-6">
+								<div class="organization-item-wrap  margin-top clearfix" data-mh="org-item">
+									<div class="logo">
+										<img src="{{ obj.logo.url }}" alt="" width="80" height="80">
+									</div>
+									<div class="basic-info">
+										<h4>{{ obj.name }}</h4>
+										<p>{{ obj.address }}</p>
+										<p>{{ obj.get_country_display }}</p>
+									</div>
+									<div class="action-button margin-top">
+                                        <form action="{% url 'users:send_request_organization' obj.id %}" method="get">
+                                            <button class="btn btn-primary" value="Send Request">Send Request</button>
+                                        </form>
+									</div>
+								</div>
+							</div>
+							{% empty %}
+							{% trans 'No matching results' %}
+							{% endfor %}
+						</div>
+
+
+					</div>
+				</section>
+
+			</div>
+{% endblock %}

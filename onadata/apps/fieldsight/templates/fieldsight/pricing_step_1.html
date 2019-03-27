@@ -1,0 +1,206 @@
+{% load static %}
+
+        <div class="bg-primary p-4">
+        	<div class="bg-light p-4 m-4">
+        		<div class="pb-2"></div>
+        		<h4 class="text-center mt-4 mb-3"><strong>Fieldsight Plans & Pricing</strong></h4>
+        		<p class="text-center mb-4 text-xlight">Fieldsight is provided open-source and under a non-profit model.<br/>
+        		Fees for access to the system cover the costs of hosting data and providing support. <br/>Additional services are priced at our costs. Contact us more to discuss.</p>
+        		<div class="pb-2 text-center">
+        			<div class="btn-group btn-group-toggle" data-toggle="buttons">
+					  <label class="btn btn-pk btn-outline-primary active">
+					    <input type="radio" name="pay-type" id="monthly" value="monthly" autocomplete="off" checked> Monthly
+					  </label>
+					  <label class="btn btn-pk btn-outline-primary">
+					    <input type="radio" name="pay-type" id="yearly" value="yearly" autocomplete="off"> Yearly
+					  </label>
+					</div>
+        		</div>
+		  		<div class="row">
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_free">
+		  					<div class="mp-head pbg-1">
+		  						<h4>Free</h4>
+						    	<h3><strong>$0</strong><sub> /Yr</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>250</strong> Submissions</li>
+									<li><strong>15</strong> Users, <strong>2</strong> Projects, <strong>10</strong> Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+
+		  					</div>
+		  					<div class="mp-footer">
+								<a data-toggle='collapse' href='#collapseEx0' title="" class="btn pbg-1 btn-block btn-lg disabled" id="free_plan">Subscribed</a>
+
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_starter">
+		  					<div class="mp-head pbg-2">
+		  						<h4>Starter</h4>
+						    	<h3><strong>$20</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>1,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+		  						<a data-toggle='collapse' href='#collapseEx1' title="" class="btn pbg-2 btn-block btn-lg plan" id="starter_plan">Select</a>
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_basic">
+		  					<div class="mp-head pbg-3">
+		  						<h4>Basic</h4>
+						    	<h3><strong>$100</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>5,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="basic_plan"/>-->
+										<!--<input type="hidden" name="interval" value="monthly"/>-->
+
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+
+										<!--<button type="submit"  class="btn pbg-3 btn-block btn-lg">Select</button>-->
+		  						<a data-toggle='collapse' disabled href='#collapseEx2' title="" class="btn pbg-3 btn-block btn-lg plan" id="basic_plan">Select</a>
+
+								<!--</form>-->
+
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_extended">
+		  					<div class="mp-head pbg-4">
+		  						<h4>Extended</h4>
+						    	<h3><strong>$500</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>20,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="extended_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
+
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit"  class="btn pbg-4 btn-block btn-lg">Select</button>-->
+		  						<a data-toggle='collapse' href='#collapseEx3' title="" class="btn pbg-4 btn-block btn-lg plan" id="extended_plan">Select</a>
+
+								<!--</form>-->
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_pro">
+		  					<div class="mp-head pbg-5">
+		  						<h4>Pro</h4>
+						    	<h3><strong>$1,000</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>50,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="pro_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit" class="btn pbg-5 btn-block btn-lg">Select</button>-->
+
+								<!--</form>-->
+								<a data-toggle='collapse' href='#collapseEx4' title="" class="btn pbg-5 btn-block btn-lg plan" id="pro_plan">Select</a>
+
+		  					</div>
+		  				</div>
+		  			</div>
+		  			<div class="col-md-4">
+		  				<div class="module-pricing mt-4" id="pk_scale">
+		  					<div class="mp-head pbg-6">
+		  						<h4>Scale</h4>
+						    	<h3><strong>$3,000</strong><sub> /Mo</sub></h3>
+						    	<div class="tri-wrap">
+						    		<div class="tri-left"></div>
+						    		<div class="tri-right"></div>
+						    	</div>
+		  					</div>
+		  					<div class="mp-body">
+		  						<ul>
+		  							<li><strong>150,000</strong> Submissions</li>
+									<li><strong>Unlimited</strong> Users, Projects, Sites</li>
+									<li><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+									<li><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+								</ul>
+		  					</div>
+		  					<div class="mp-footer">
+								<!--<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">-->
+									<!--<input type="hidden" name="plan_name" value="scale_plan"/>-->
+									<!--<input type="hidden" name="interval" value="monthly"/>-->
+
+									  <!--{% csrf_token %}-->
+									<!--{% include 'subscriptions/stripe_checkout.html' %}-->
+									<!--<button type="submit"  class="btn btn-block pbg-6 btn-lg">Select</button>-->
+
+								<!--</form>-->
+								<a data-toggle='collapse' href='#collapseEx5' title="" class="btn btn-block pbg-6 btn-lg plan" id="scale_plan">Select</a>
+
+		  					</div>
+
+		  				</div>
+		  			</div>
+		  		</div>
+				<div class="text-center mt-4">
+        			<a href="#" title="" class="btn btn-primary btn-next" id="first_next">Next <i class="la la-long-arrow-right"></i></a>
+        		</div>
+			</div>
+		</div>

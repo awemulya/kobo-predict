@@ -143,24 +143,33 @@ class SiteLog(viewsets.ModelViewSet):
 
 class NotificationCountnSeen(View):
     def get(self, request):
-        if request.user.is_authenticated():
-            queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
-        else:
-            return JsonResponse({'error': 'Please log In'})
-        if request.group.name == "Super Admin":
-            count = queryset.filter().exclude(seen_by__id=request.user.id).count()       
-            task_count = CeleryTaskProgress.objects.filter(status__in=[2,3], date_updateded__gte = request.user.user_profile.task_last_view_date).count()
-        else:
-            org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
-            project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
-            site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
-            count = queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
-            task_count = CeleryTaskProgress.objects.filter(status__in=[2,3], user_id = request.user.id, date_updateded__gte = request.user.user_profile.task_last_view_date).count()
-        data = {
-            'id': request.user.id,
-            'count': count,
-            'task_count': task_count
-        }
+        try:
+            if request.user.is_authenticated():
+                queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
+            else:
+                return JsonResponse({'error': 'Please log In'})
+            if request.group.name == "Super Admin":
+                count = queryset.filter().exclude(seen_by__id=request.user.id).count()
+                task_count = CeleryTaskProgress.objects.filter(status__in=[2,3], date_updateded__gte = request.user.user_profile.task_last_view_date).count()
+            else:
+                org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
+                project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
+                site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
+                count = queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
+                task_count = CeleryTaskProgress.objects.filter(status__in=[2,3], user_id = request.user.id, date_updateded__gte = request.user.user_profile.task_last_view_date).count()
+            data = {
+                'id': request.user.id,
+                'count': count,
+                'task_count': task_count
+            }
+        except Exception as e:
+            print(str(e))
+            data = {
+                'id': request.user.id,
+                'count': 0,
+                'task_count': 0
+            }
+
         return JsonResponse(data)
 
     def post(self, request):

@@ -1,0 +1,87 @@
+{% load static %}
+        <div class="bg-primary p-4">
+                <div class="bg-light p-4 m-4">
+                <form action="{% url 'subscriptions:finish_subscription' obj.pk %}" method="post" id="payment-form">{% csrf_token %}
+                    <input type="hidden" name="interval" value="monthly"/>
+                    <input type="hidden" name="plan_name" value=""/>
+
+
+                    <div class="pb-2"></div>
+                    <h6 class="text-center mt-4"><strong>Thank you for signing up with FieldSight!</strong></h6>
+                    <h5 class="text-center mt-2 mb-3"><strong>You have selected the <span id="plan"></span></strong></h5>
+                    <p class="text-center mb-4 text-xlight">To complete the signup process, please provide your payment details. <br/> FieldSight subscription fees are charged at the start of delivering service and renew automatically.</p>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h6 class="mt-4"><strong>Plan Detail :</strong></h6>
+                            <ul class="list-icon mt-4 mb-4">
+                                <li><i class="la la-chevron-circle-right"></i><strong><span id="submissions"></span></strong> Submissions</li>
+                                <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Users, Projects & Sites</li>
+                                <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Users, Projects & Sites</li>
+                                <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+                                <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+                                <li><i class="la la-chevron-circle-right"></i><strong>Access</strong> to our Android App</li>
+
+                            </ul>
+                        </div>
+
+                        <div class="col-md-3">
+                            <h6 class="mt-4"><strong>Plan Period :</strong></h6>
+                            <ul class="list-icon mt-4 mb-4">
+                                <li>
+                                    <i class="la la-calendar-check-o"></i>
+                                    <strong>Starting Date</strong>
+                                    <p><span id="starting_date"></span></p>
+                                </li>
+                                <li>
+                                    <i class="la la-calendar-minus-o"></i>
+                                    <strong>Ending Date</strong>
+                                    <p><span id="ending_date"></span></p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-input-wrap mt-4 mb-4">
+                                    <!--<div class="form-group">-->
+                                        <!--<label for="inputCardNumber">Number</label>-->
+                                        <!--<input type="text" class="form-control" id="inputCardNumber" placeholder="xxxx xxxx xxxx xxxx">-->
+                                    <!--</div>-->
+                                    <!--<div class="form-row">-->
+                                        <!--<div class="form-group col-md-6">-->
+                                          <!--<label for="inputCardExpireDate">Expire Date</label>-->
+                                          <!--<input type="text" class="form-control" id="inputCardExpireDate" placeholder="MM/YY">-->
+                                        <!--</div>-->
+                                        <!--<div class="form-group col-md-6">-->
+                                          <!--<label for="inputCardSecurityCode">Security Code</label>-->
+                                          <!--<input type="test" class="form-control" id="inputCardSecurityCode" placeholder="000">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <label for="card-element">
+                                          Credit or debit card
+
+                                        </label>
+                                        <div id="card-element">
+                                              <!-- a Stripe Element will be inserted here. -->
+
+
+                                        </div>
+
+                                        <!-- Used to display form errors -->
+                                        <div id="card-errors" role="alert">
+
+                                        </div>
+
+                            </div>
+                            <p class="text-center"><small></small></p>
+                        </div>
+
+                    </div>
+                    <div class="text-center">
+                        <a href="#" title="" class="btn btn-primary btn-prev" id="btn_previous"><i class="la la-long-arrow-left" ></i> Previous</a>
+                        <button type="submit" class="btn btn-primary">Next<i class="la la-long-arrow-right"></i></button>
+                    </div>
+                </form>
+
+                </div>
+
+		</div>
