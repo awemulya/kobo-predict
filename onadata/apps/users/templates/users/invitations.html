@@ -10,11 +10,11 @@
         <![endif]-->
 
 			<div id="main-content" class="padding">
-				{% if not has_org %}
 					<div class="row">
 						{% if invitations %}
+
 						<div class="col-md-4">
-							<section class="panel">
+							<section class="panel  bg-white" data-mh="lft-eq-height">
 								<header class="panel-heading clearfix">
 									<h3><i class="la la-envelope-o"></i>Invitations</h3>
 
@@ -60,27 +60,46 @@
 											<a href="{% url 'users:decline_invitation' item.pk request.user.username %}" title="" class="btn btn-light btn-sm btn-xs mt-2"><i class="la la-close"></i> Reject</a>
 										</div>
 									{% endfor %}
+
 								</div>
 							</section>
 						</div>
-						{% endif %}
 						<div class="col-md-8">
-							<section class="panel">
+							<section class="panel bg-white" data-mh="lft-eq-height">
 								<header class="panel-heading clearfix">
 									<h3><i class="la la-building"></i>Organizations</h3>
+
 								</header>
 								<div class="panel-body">
-									<div class="panel-heading">
-										<a href="{% url 'fieldsight:organization-add' %}" title="" class="btn 	btn-primary "><i class="la la-plus"></i> Add Your Organization</a>
+									<div class="uh-create-org bg-light margin-top p-4 text-center">
+										<p class="mt-4">Hi <strong>{{request.user.first_name}}! </strong><br>
+											Thank you for signing up in FieldSight.<br>
+											You can now create your first Organization to get started with the features in the platform.</p>
+										<a href="{% url 'fieldsight:organization-add' %}" title="" class="btn btn-primary mb-4"><i class="la la-plus"></i> Create Organization</a>
 									</div>
 								</div>
 							</section>
 						</div>
+						{% else %}
+						<div class="col-md-12">
+							<section class="panel bg-white" data-mh="lft-eq-height">
+								<header class="panel-heading clearfix">
+									<h3><i class="la la-building"></i>Organizations</h3>
 
-					</div>
-					{% else %}
-					<p>You do not have invitations.</p>
-				{% endif %}
+								</header>
+								<div class="panel-body">
+									<div class="uh-create-org bg-light margin-top p-4 text-center">
+										<p class="mt-4">Hi <strong>{{request.user.first_name}}! </strong><br>
+											Thank you for signing up in FieldSight.<br>
+											You can now create your first Organization to get started with the features in the platform.</p>
+										<a href="{% url 'fieldsight:organization-add' %}" title="" class="btn btn-primary mb-4"><i class="la la-plus"></i> Create Organization</a>
+									</div>
+								</div>
+							</section>
+						</div>
+						{% endif %}
+
+
 			</div>
 		<script src="assets/js/vendor/jquery.matchHeight.js"></script>
         <script src="assets/js/plugins.js"></script>

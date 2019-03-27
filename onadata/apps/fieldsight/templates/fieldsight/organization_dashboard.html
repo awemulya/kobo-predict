@@ -17,6 +17,36 @@
 		pointer-events: none;
 		cursor: default;
  }
+	 .StripeElement {
+	  box-sizing: border-box;
+
+	  height: 40px;
+
+	  padding: 10px 12px;
+
+	  border: 1px solid rgba(0,0,0,0.1);
+	  border-radius: 3px;
+	  background-color: white;
+
+	  box-shadow: none;
+	  -webkit-transition: box-shadow 150ms ease;
+	  transition: box-shadow 150ms ease;
+	}
+
+
+
+	.StripeElement--focus {
+	  box-shadow: 0 1px 3px 0 #cfd7df;
+	}
+
+	.StripeElement--invalid {
+	  border-color: #fa755a;
+	}
+
+	.StripeElement--webkit-autofill {
+	  background-color: #fefde5 !important;
+	}
+
 </style>
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
@@ -51,15 +81,15 @@ var org = "{{obj.pk}}";
 		{% if not request.user.is_superuser%}
 			{% if has_user_free_package  %}
 			<div class="modal fade" id="pricingModal1" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
-			  <div class="modal-dialog modal-xl" role="document" style="overflow-y: initial !important">
+			  <div class="modal-dialog modal-xl" role="document">
 				<div class="modal-content">
 				  <div class="modal-header">
-					<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+					<h5 class="modal-title" id="pricingModalLabel">Choose a Plan</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				  </div>
-				  <div class="modal-body" style="max-height: calc(100vh - 200px);overflow-y: auto;">
+				  <div class="modal-body">
 
 					{% include 'fieldsight/pricing_step_1.html' %}
 				  </div>
@@ -67,11 +97,11 @@ var org = "{{obj.pk}}";
 			  </div>
 			</div>
 
-			<div class="modal fade" id="pricingModal2" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+			<div class="modal fade" id="pricingModal2"  tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
 				  <div class="modal-dialog modal-xl" role="document">
 					<div class="modal-content">
 					  <div class="modal-header">
-						<h5 class="modal-title" id="pricingModalLabel">Payment Details</h5>
+						<h5 class="modal-title" id="pricingModalLabel">Card Information</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						  <span aria-hidden="true">&times;</span>
 						</button>
@@ -492,6 +522,22 @@ var org = "{{obj.pk}}";
 			  }
 			});
 
+			var style = {
+			  base: {
+				color: '#32325d',
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: 'antialiased',
+				fontSize: '16px',
+				'::placeholder': {
+				  color: '#aab7c4'
+				}
+			  },
+			  invalid: {
+				color: '#fa755a',
+				iconColor: '#fa755a'
+			  }
+			};
+
 		// Mount the UI card component into the `card-element` <div>
 		card.mount('#card-element');
 		function stripeTokenHandler(token) {
@@ -541,26 +587,38 @@ var org = "{{obj.pk}}";
 
     </script>
 	<script>
-	 	$("div[id^='pricingModal']").each(function(){
-				var currentModal = $(this);
+	$(document).ready(function(){
+		$("#first_next").click(function(){
+			$('#pricingModal1').modal('hide');
+			$('#pricingModal2').modal('show');
+		});
 
-				 //click next
-				  currentModal.find('.btn-next').click(function(){
-					currentModal.modal('hide');
-					currentModal.closest("div[id^='pricingModal']").nextAll("div[id^='pricingModal']").first().modal('show');
-				  });
+		//Add and remove modal-open class to-from body
+		$('#pricingModal2').on('shown.bs.modal', function () {
+		  $('body').addClass('modal-open');
+		});
+		$('#pricingModal2').on('hidden.bs.modal', function () {
+		  $('body').removeClass('modal-open');
+		});
 
-				  //click prev
-				  currentModal.find('.btn-prev').click(function(){
-					currentModal.modal('hide');
-					currentModal.closest("div[id^='pricingModal']").prevAll("div[id^='pricingModal']").first().modal('show');
-				  });
+		$("#btn_previous").click(function(){
+			$('#pricingModal2').modal('hide');
+			$('#pricingModal1').modal('show');
+		});
 
-
-				});
+		//Add and remove modal-open class to-from body
+		$('#pricingModal1').on('shown.bs.modal', function () {
+		  $('body').addClass('modal-open');
+		});
+		$('#pricingModal1').on('hidden.bs.modal', function () {
+		  $('body').removeClass('modal-open');
+		});
+	});
 
 
 			$(document).ready(function(){
+
+
 
 				//get selected package
 					var plan = [];
@@ -576,6 +634,19 @@ var org = "{{obj.pk}}";
 
 						}
 
+				function active_plan(el){
+					$(el).closest('.module-pricing').addClass('selected-plan');
+					$(el).closest('.module-pricing').find('.mp-head').addClass('bg-secondary');
+					$(el).addClass('bg-secondary');
+					$(el).addClass('border-secondary');
+				}
+
+				function deactive_plan(el){
+					$(el).closest('.module-pricing').removeClass('selected-plan');
+					$(el).closest('.module-pricing').find('.mp-head').removeClass('bg-secondary');
+					$(el).removeClass('bg-secondary');
+					$(el).removeClass('border-secondary');
+				}
 
 				//toogle
 				$(function() {
@@ -583,19 +654,25 @@ var org = "{{obj.pk}}";
 
 					var toggled = false;
 					btn.on("click", function() {
+
 						if(!toggled)
 						{
+						active_plan(this);
 						  toggled = true;
-						  btn.text("Selected");
+						  btn.html("Selected <i class='la la-check-circle'></i>");
+						  $("[href='#collapseEx0']").text("Select");
 							selected_plan = 'starter_plan';
 							$("#basic_plan, #extended_plan, #pro_plan, #scale_plan").addClass("disabled");
 							$("#first_next").removeClass("disabled");
 
 						} else {
 						  toggled = false;
-						  btn.text("Select");
+						  btn.html("Select");
+						  deactive_plan(this);
+
 							selected_plan = '';
 							$("#basic_plan, #extended_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("[href='#collapseEx0']").text("Subscribed");
 							$("#first_next").addClass("disabled");
 
 						}
@@ -605,10 +682,15 @@ var org = "{{obj.pk}}";
 					var btn = $("[href='#collapseEx2']");
 					var toggled = false;
 					btn.on("click", function() {
+					$(this).closest('.module-pricing').addClass('selected-plan');
+
 						if(!toggled)
 						{
 						  toggled = true;
-						  btn.text("Selected");
+						  active_plan(this);
+						  btn.html("Selected <i class='la la-check-circle'></i>");
+
+						   $("[href='#collapseEx0']").text("Select");
 							selected_plan = 'basic_plan';
 							$("#starter_plan, #extended_plan, #pro_plan, #scale_plan").addClass("disabled");
 							$("#first_next").removeClass("disabled");
@@ -617,9 +699,13 @@ var org = "{{obj.pk}}";
 
 						} else {
 						  toggled = false;
-						  btn.text("Select");
+						  btn.html("Select");
+						  deactive_plan(this);
+						  <!--btn.css("backgroundColor", "");-->
+						  	$(this).closest('.module-pricing').removeClass('selected-plan');
 							selected_plan = '';
 							$("#starter_plan, #extended_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("[href='#collapseEx0']").text("Subscribed");
 							$("#first_next").addClass("disabled");
 
 
@@ -631,10 +717,14 @@ var org = "{{obj.pk}}";
 					var btn = $("[href='#collapseEx3']");
 					var toggled = false;
 					btn.on("click", function() {
+					$(this).closest('.module-pricing').addClass('selected-plan');
+
 						if(!toggled)
 						{
 						  toggled = true;
-						  btn.text("Selected");
+						  active_plan(this);
+						  btn.html("Selected <i class='la la-check-circle'></i>");
+						   $("[href='#collapseEx0']").text("Select");
 							selected_plan = 'extended_plan';
 							$("#starter_plan, #basic_plan, #pro_plan, #scale_plan").addClass("disabled");
 							$("#first_next").removeClass("disabled");
@@ -643,9 +733,12 @@ var org = "{{obj.pk}}";
 
 						} else {
 						  toggled = false;
-						  btn.text("Select");
+						  btn.html("Select");
+						  deactive_plan(this);
+						  $(this).closest('.module-pricing').removeClass('selected-plan');
 							selected_plan = '';
 							$("#starter_plan, #basic_plan, #pro_plan, #scale_plan").removeClass("disabled");
+							$("[href='#collapseEx0']").text("Subscribed");
 							$("#first_next").addClass("disabled");
 
 
@@ -657,10 +750,14 @@ var org = "{{obj.pk}}";
 					var btn = $("[href='#collapseEx4']");
 					var toggled = false;
 					btn.on("click", function() {
+					$(this).closest('.module-pricing').addClass('selected-plan');
+
 						if(!toggled)
 						{
 						  toggled = true;
-						  btn.text("Selected");
+						  active_plan(this);
+						  btn.html("Selected <i class='la la-check-circle'></i>");
+						  	$("[href='#collapseEx0']").text("Select");
 							selected_plan = 'pro_plan';
 							$("#starter_plan, #basic_plan, #extended_plan, #scale_plan").addClass("disabled");
 							$("#first_next").removeClass("disabled");
@@ -669,9 +766,13 @@ var org = "{{obj.pk}}";
 
 						} else {
 						  toggled = false;
-						  btn.text("Select");
+						  btn.html("Select");
+						  deactive_plan(this);
+						  $(this).closest('.module-pricing').removeClass('selected-plan');
+						  btn.css("backgroundColor", "");
 							selected_plan = '';
 							$("#starter_plan, #basic_plan, #extended_plan, #scale_plan").removeClass("disabled");
+							$("[href='#collapseEx0']").text("Subscribed");
 							$("#first_next").addClass("disabled");
 
 
@@ -683,10 +784,15 @@ var org = "{{obj.pk}}";
 					var btn = $("[href='#collapseEx5']");
 					var toggled = false;
 					btn.on("click", function() {
+					$(this).closest('.module-pricing').addClass('selected-plan');
+
 						if(!toggled)
 						{
 						  toggled = true;
-						  btn.text("Selected");
+						  active_plan(this);
+						  btn.html("Selected <i class='la la-check-circle'></i>");
+						  $("[href='#collapseEx0']").text("Select");
+
 							selected_plan = 'scale_plan';
 							$("#starter_plan, #basic_plan, #pro_plan, #extended_plan").addClass("disabled");
 							$("#first_next").removeClass("disabled");
@@ -694,9 +800,12 @@ var org = "{{obj.pk}}";
 
 						} else {
 						  toggled = false;
-						  btn.text("Select");
+						  btn.html("Select");
+						  deactive_plan(this);
+						  $(this).closest('.module-pricing').removeClass('selected-plan');
 							selected_plan = '';
 							$("#starter_plan, #basic_plan, #pro_plan, #extended_plan").removeClass("disabled");
+							$("[href='#collapseEx0']").text("Subscribed");
 							$("#first_next").addClass("disabled");
 
 						}
@@ -707,6 +816,7 @@ var org = "{{obj.pk}}";
 				fn_init_pack();
 
 				$('#first_next').click(function(){
+
 				var selected_interval=$("input[name='pay-type']:checked").val();
 				$('input[name="plan_name"]').val(selected_plan);
 
@@ -745,30 +855,38 @@ var org = "{{obj.pk}}";
 					}
 				}
 				function fn_yearly_tier(){
-					$("#pk_free").find('.mp-head h3 strong').text('$0');
 					$("#pk_starter").find('.mp-head h3 strong').text('$200');
+					$("#pk_starter").find('.mp-body ul li:first strong').text('1200');
 					$("#pk_basic").find('.mp-head h3 strong').text('$1,000');
+					$("#pk_basic").find('.mp-body ul li:first strong').text('6,000');
 					$("#pk_extended").find('.mp-head h3 strong').text('$5,000');
+					$("#pk_extended").find('.mp-body ul li:first strong').text('30,000');
 					$("#pk_pro").find('.mp-head h3 strong').text('$10,000');
+					$("#pk_pro").find('.mp-body ul li:first strong').text('60,000');
 					$("#pk_scale").find('.mp-head h3 strong').text('$30,000');
+					$("#pk_scale").find('.mp-body ul li:first strong').text('1,80,000');
 
 					//
 					$(".module-pricing").find('.mp-head h3 sub').text('/Yr');
 				}
 
 				function fn_monthly_tier(){
-					$("#pk_free").find('.mp-head h3 strong').text('$0');
 					$("#pk_starter").find('.mp-head h3 strong').text('$20');
+					$("#pk_starter").find('.mp-body ul li:first strong').text('100');
 					$("#pk_basic").find('.mp-head h3 strong').text('$100');
+					$("#pk_basic").find('.mp-body ul li:first strong').text('500');
 					$("#pk_extended").find('.mp-head h3 strong').text('$500');
+					$("#pk_extended").find('.mp-body ul li:first strong').text('25000');
 					$("#pk_pro").find('.mp-head h3 strong').text('$1,000');
+					$("#pk_pro").find('.mp-body ul li:first strong').text('5,000');
 					$("#pk_scale").find('.mp-head h3 strong').text('$3,000');
+					$("#pk_scale").find('.mp-body ul li:first strong').text('15,000');
 
 					//
 					$(".module-pricing").find('.mp-head h3 sub').text('/Mo');
+					$("#pk_free").find('.mp-head h3 sub').text('/Yr');
 				}
 			});
-//$('body').addClass('modal-open');
 
 
 	</script>

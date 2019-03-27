@@ -6,7 +6,7 @@ class Command(BaseCommand):
     help = 'Create default packages'
 
     def handle(self, *args, **options):
-        
+
         PLAN_CHOICES = {
             0:
                  {'Free':
