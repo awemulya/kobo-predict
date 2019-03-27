@@ -87,13 +87,22 @@ from onadata.apps.fieldsight.mixins import LoginRequiredMixin
 #
 #     return HttpResponseRedirect(reverse("users:profile", kwargs={'pk': request.user.pk}))
 
-PLANS = {
-    'starter_plan': 'Starter Plan',
-    'basic_plan': 'Basic Plan',
-    'extended_plan': 'Extended Plan',
-    'pro_plan': 'Pro Plan',
-    'scale_plan': 'Scale Plan'
+MONTHLY_PLAN_NAME = {
+    'starter_plan': 'Starter Monthly Plan',
+    'basic_plan': 'Basic Monthly Plan',
+    'extended_plan': 'Extended Monthly Plan',
+    'pro_plan': 'Pro Monthly Plan',
+    'scale_plan': 'Scale Monthly Plan'
 }
+
+YEARLY_PLAN_NAME = {
+    'starter_plan': 'Starter Yearly Plan',
+    'basic_plan': 'Basic Yearly Plan',
+    'extended_plan': 'Extended Yearly Plan',
+    'pro_plan': 'Pro Yearly Plan',
+    'scale_plan': 'Scale Yearly Plan'
+}
+
 
 INTERVAL = {
     'yearly': 2,
@@ -367,7 +376,6 @@ def finish_subscription(request, org_id):
         card = stripe_customer.sources.data[0].last4
 
         period = request.POST['interval']
-        plan_name = PLANS[request.POST['plan_name']]
 
         starting_date = datetime.now().strftime('%A, %B %d, %Y')
         if period == 'yearly':
@@ -375,12 +383,14 @@ def finish_subscription(request, org_id):
             selected_plan = settings.YEARLY_PLANS[request.POST['plan_name']]
             package = Package.objects.get(plan=settings.PLANS[selected_plan], period_type=2)
             ending_date = datetime.now() + dateutil.relativedelta.relativedelta(months=12)
+            plan_name = YEARLY_PLAN_NAME[request.POST['plan_name']]
 
         elif period == 'monthly':
             overage_plan = settings.MONTHLY_PLANS_OVERRAGE[request.POST['plan_name']]
             selected_plan = settings.MONTHLY_PLANS[request.POST['plan_name']]
             package = Package.objects.get(plan=settings.PLANS[selected_plan], period_type=1)
             ending_date = datetime.now() + dateutil.relativedelta.relativedelta(months=1)
+            plan_name = MONTHLY_PLAN_NAME[request.POST['plan_name']]
 
         sub = customer.subscriptions.create(
             items=[
@@ -432,14 +442,15 @@ def get_package(request):
     interval = request.GET.get('interval', None)
 
     period = INTERVAL[interval]
-    selected_plan = PLANS[plan]
     if interval == 'yearly':
         ending_date = datetime.now()+dateutil.relativedelta.relativedelta(months=12)
         submissions = Package.objects.get(plan=settings.PLANS[settings.YEARLY_PLANS[plan]], period_type=period).submissions
+        selected_plan = YEARLY_PLAN_NAME[plan]
 
     elif interval == 'monthly':
         ending_date = datetime.now()+dateutil.relativedelta.relativedelta(months=1)
         submissions = Package.objects.get(plan=settings.PLANS[settings.MONTHLY_PLANS[plan]], period_type=period).submissions
+        selected_plan = MONTHLY_PLAN_NAME[plan]
 
     data = {
         'selected_plan': selected_plan,

@@ -40,7 +40,7 @@ var org = "{{obj.pk}}";
 				  <div class="modal-dialog modal-xl" role="document">
 					<div class="modal-content">
 					  <div class="modal-header">
-						<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+						<h5 class="modal-title" id="pricingModalLabel">Payment Details</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						  <span aria-hidden="true">&times;</span>
 						</button>
@@ -97,7 +97,7 @@ var org = "{{obj.pk}}";
 										</div>
 									</div>
 									<div class="text-center">
-										<a href="{% url 'subscriptions:team_settings' organization.pk %}" title="" class="btn btn-primary">Finish <i class="la la-check-circle"></i></a>
+										<a href="{% url 'fieldsight:organizations-dashboard' organization.pk %}" title="" class="btn btn-primary">Start Using FieldSight <i class="la la-long-arrow-right"></i></a>
 									</div>
 								</div>
 							</div>
