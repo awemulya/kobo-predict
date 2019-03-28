@@ -1354,13 +1354,12 @@ class SiteUserList(ReviewerRoleMixin, ListView):
         context['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
         context['type'] = "site"
-        context['project'] = context['obj'].project
         return context
 
     def get_queryset(self):
         project = Site.objects.get(pk=self.kwargs.get('pk')).project
         queryset = UserRole.objects.filter(ended_at__isnull=True).filter(
-            Q(site_id=self.kwargs.get('pk')) | Q(region__project=project) | Q(region__region__project=project)).select_related('user').distinct('user_id')
+            Q(site_id=self.kwargs.get('pk')) | Q(region__project=project)).select_related('user').distinct('user_id')
     
         return queryset
 
