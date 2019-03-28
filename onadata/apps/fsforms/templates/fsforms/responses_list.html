@@ -109,10 +109,11 @@
                             {% endif %}
                       </td>
                       <td>
-
+                            {% if  is_donor_only %}
                           <a target="_blank" href="{% url 'forms:new-submission' obj.id site %}">
                               <i class="la la-plus" aria-hidden="true"></i>
                           </a>
+                          {% endif %}
                           
                       </td>
                   </tr>
@@ -251,10 +252,12 @@
                             {% endif %}
                       </td>
                       <td>
+                          {% if  is_donor_only %}
                           {% if obj.form %}
                                   <a target="_blank" href="{% url 'forms:new-submission' obj.form.id site %}">
                                       <i class="la la-plus" aria-hidden="true"></i>
                                   </a>
+                          {% endif %}
                           {% endif %}
                       </td>
                   </tr>
@@ -399,10 +402,12 @@
                                     {% endif %}
                               </td>
                                <td>
+                                   {% if  is_donor_only %}
                                 {% if obj.form %}
                                   <a target="_blank" href="{% url 'forms:new-submission' obj.form.id site %}">
                                       <i class="la la-plus" aria-hidden="true"></i>
                                   </a>
+                                {% endif %}
                                 {% endif %}
                               </td>
 
