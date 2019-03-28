@@ -3,6 +3,42 @@
 {% load filters %}
 {% block content %}
 
+{%block extracss %}
+
+    <style>
+         .StripeElement {
+          box-sizing: border-box;
+
+          height: 40px;
+
+          padding: 10px 12px;
+
+          border: 1px solid rgba(0,0,0,0.1);
+          border-radius: 3px;
+          background-color: white;
+
+          box-shadow: none;
+          -webkit-transition: box-shadow 150ms ease;
+          transition: box-shadow 150ms ease;
+        }
+
+
+
+        .StripeElement--focus {
+          box-shadow: 0 1px 3px 0 #cfd7df;
+        }
+
+        .StripeElement--invalid {
+          border-color: #fa755a;
+        }
+
+        .StripeElement--webkit-autofill {
+          background-color: #fefde5 !important;
+        }
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}
 			<div id="main-content" class="padding">
                 <nav aria-label="breadcrumb" role="navigation">
                     {% block breadcrumbs %}
@@ -27,58 +63,73 @@
 
                     </header>
 					<div class="panel-body">
-						<div class="container">
+						<div class="">
                           <div class="row">
-                            <div class="col-sm">
-                              <h6>Account Information</h6>
-                                <p>
-                                    Email: {{customer.user.email}}
-                                </p>
+                              <div class="col-md-4">
+                                <h6 class="mt-4"><strong>Subscribed Package:</strong></h6>
+                                <div class="sp-head mt-4 mb-4">
+                                    <h5>{{subscribed_package.get_plan_display}}</h5>
 
-                                {% if not has_user_free_package %}
-                                <p>Card: **** **** **** {{card}}</p>
+                                    {% if not has_user_free_package %}
 
-                                <form action="{% url 'subscriptions:update_card' %}" method="post">
-									  {% csrf_token %}
-									<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                        data-key="{{ key }}"
-                                        data-description="Update Your Card"
-                                        data-email="{{request.user.email}}"
+                                        <h4><strong>${{subscribed_package.total_charge}}</strong><sub> /{{subscribed_package.get_period_type_display}}</sub></h4>
+                                        {% else %}
+                                        <h4><strong>${{subscribed_package.total_charge}}</strong><sub> /Yr</sub></h4>
 
-                                        data-locale="auto" data-label="Update" data-panel-label="Update">
-                                    </script>
-									<button type="submit" class="btn btn-primary pull-left">Update Your Card</button>
+                                    {% endif %}
+                                </div>
+                                <ul class="list-icon mt-4 mb-4">
+                                    <li><i class="la la-chevron-circle-right"></i><strong>{{subscribed_package.submissions}}</strong> Submissions</li>
+                                    {% if not has_user_free_package %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Users, Projects, Sites</li>
+                                    {% else %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>15</strong> Users, <strong>2</strong> Projects, <strong>10</strong> Sites</li>
+                                    {% endif %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+                                </ul>
 
-								</form>
-
-
-                                </p>
-
-                                {% endif %}
-                            </div>
-                            <div class="col-sm">
-                                <h6>Subscribed Package</h6>
-                                <p>Plan: {{subscribed_package.get_plan_display}}</p>
-                                <p>Total Submissions: {{subscribed_package.submissions}}</p>
-
-                                {% if not has_user_free_package %}
-                                    <p>Total Charge: ${{subscribed_package.total_charge}}/{{subscribed_package.get_period_type_display}}</p>
-                                    <p>Extra charge per submission: ${{subscribed_package.extra_submissions_charge}}</p>
-                                {% endif %}
-
-                                {% if not has_user_free_package %}
-                                    <p>Unlimited Users, Projects, Sites</p>
-                                 {% else %}
-                                    <p>15 Users, 2 Projects, 10 Sites</p>
-                                {% endif %}
-
-                                    <p>Unlimited Forms, Stages & Schedules</p>
-                                    <p>Unlimited Reports, Dashboards & Maps</p>
                                 {% if has_user_free_package %}
-
-                                    <p><a href="{% url 'fieldsight:organizations-dashboard' organization.id%}" class="btn btn-sm btn-primary">Upgrade Your Package</a></p>
+                                    <a href="{% url 'fieldsight:organizations-dashboard' organization.id%}" class="btn btn-sm btn-primary mb-4">Upgrade Your Package</a>
                                 {% endif %}
                             </div>
+                            <div class="col-md-4">
+                                {% if not has_user_free_package %}
+                                <h6 class="mt-4"><strong>Account Information:</strong></h6>
+                                <ul class="list-icon mt-4 mb-2">
+                                    <li>
+                                        <i class="la la-envelope"></i>
+                                        Email Address<br/>
+                                        <strong>{{customer.user.email}}</strong>
+                                    </li>
+                                    <li>
+                                        <i class="la la-credit-card"></i>
+                                        Card Info<br/>
+                                        <strong>**** **** **** {{card}}</strong>
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseEditCard" aria-expanded="false" aria-controls="collapseEditCard">Edit Card Info <i class="la la-edit"></i></button>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 collapse" id="collapseEditCard">
+                                <h6 class="mt-4 ml-4"><strong>Edit Card Info:</strong></h6>
+                                <form action="{% url 'subscriptions:update_card' %}" method="post" id="payment-form">{% csrf_token %}
+                                <div class="card-input-wrap m-4">
+
+                                        <label for="card-element">Credit or debit card</label>
+                                        <div id="card-element">
+                                            <!-- a Stripe Element will be inserted here. -->
+                                        </div>
+
+                                        <!-- Used to display form errors -->
+                                        <div id="card-errors" role="alert"></div>
+
+
+                                </div>
+                                    <button type="submit" class="btn btn-primary ml-4 mb-4">Save Info <i class="la la-save"></i></button>
+                                 </form>
+                            </div>
+
 
                           </div>
                         </div>
@@ -93,11 +144,102 @@
 {%block extrascript %}
 
 <script>
+
+    function toogleCard() {
+          var stripe_card = document.getElementById("stripe_card");
+          var update_btn_txt = $('#update_card');
+          if (stripe_card.style.display === "none") {
+            stripe_card.style.display = "block";
+            update_btn_txt.html('Close Your Card');
+          } else {
+            stripe_card.style.display = "none";
+            update_btn_txt.html('Update Your Card');
+
+          }
+    }
     var totalSItems = document.getElementsByClassName("stripe-button-el");
 
 			for(i = 0; i<totalSItems.length; i++){
 				totalSItems[i].style.display = 'none';
 			}
+
+			 var stripe = Stripe('{{key}}');
+    		var elements = stripe.elements();
+
+		  // Create an instance of the card UI component
+			var card = elements.create('card', {
+			  'style': {
+				'base': {
+				  'fontFamily': 'Arial, sans-serif',
+				  'fontSize': '14px',
+				  'color': 'black',
+				},
+				'invalid': {
+				  'color': 'red',
+				},
+			  }
+			});
+
+			var style = {
+			  base: {
+				color: '#32325d',
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: 'antialiased',
+				fontSize: '16px',
+				'::placeholder': {
+				  color: '#aab7c4'
+				}
+			  },
+			  invalid: {
+				color: '#fa755a',
+				iconColor: '#fa755a'
+			  }
+			};
+
+		// Mount the UI card component into the `card-element` <div>
+		card.mount('#card-element');
+		function stripeTokenHandler(token) {
+		  // Insert the token ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeToken');
+		  hiddenInput.setAttribute('value', token.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+		  form.submit();
+		}
+
+	function createToken() {
+	  stripe.createToken(card).then(function(result) {
+		if (result.error) {
+		  // Inform the user if there was an error
+		  var errorElement = document.getElementById('card-errors');
+		  errorElement.textContent = result.error.message;
+		} else {
+		  // Send the token to your server
+		  stripeTokenHandler(result.token);
+		}
+	  });
+	};
+
+	// Create a token when the form is submitted.
+	var form = document.getElementById('payment-form');
+	form.addEventListener('submit', function(e) {
+	  e.preventDefault();
+	  createToken();
+	});
+
+	card.addEventListener('change', function(event) {
+	  var displayError = document.getElementById('card-errors');
+	  if (event.error) {
+		displayError.textContent = event.error.message;
+	  } else {
+		displayError.textContent = '';
+	  }
+	});
+
 </script>
 {% endblock %}
 
