@@ -63,74 +63,73 @@
 
                     </header>
 					<div class="panel-body">
-						<div class="container">
+						<div class="">
                           <div class="row">
-                            <div class="col-sm">
-                              <h6>Account Information</h6>
-                                <p>
-                                    Email: {{customer.user.email}}
-                                </p>
+                              <div class="col-md-4">
+                                <h6 class="mt-4"><strong>Subscribed Package:</strong></h6>
+                                <div class="sp-head mt-4 mb-4">
+                                    <h5>{{subscribed_package.get_plan_display}}</h5>
 
+                                    {% if not has_user_free_package %}
+
+                                        <h4><strong>${{subscribed_package.total_charge}}</strong><sub> /{{subscribed_package.get_period_type_display}}</sub></h4>
+                                        {% else %}
+                                        <h4><strong>${{subscribed_package.total_charge}}</strong><sub> /Yr</sub></h4>
+
+                                    {% endif %}
+                                </div>
+                                <ul class="list-icon mt-4 mb-4">
+                                    <li><i class="la la-chevron-circle-right"></i><strong>{{subscribed_package.submissions}}</strong> Submissions</li>
+                                    {% if not has_user_free_package %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Users, Projects, Sites</li>
+                                    {% else %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>15</strong> Users, <strong>2</strong> Projects, <strong>10</strong> Sites</li>
+                                    {% endif %}
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Forms, Stages & Schedules</li>
+                                    <li><i class="la la-chevron-circle-right"></i><strong>Unlimited</strong> Reports, Dashboards & Maps</li>
+                                </ul>
+
+                                {% if has_user_free_package %}
+                                    <a href="{% url 'fieldsight:organizations-dashboard' organization.id%}" class="btn btn-sm btn-primary mb-4">Upgrade Your Package</a>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
                                 {% if not has_user_free_package %}
-                                <p>Card: **** **** **** {{card}}</p>
-                                <button onclick="toogleCard()" type="button" class="btn btn-primary pull-left" id="update_card">Update Your Card</button>
-                                <br>
+                                <h6 class="mt-4"><strong>Account Information:</strong></h6>
+                                <ul class="list-icon mt-4 mb-2">
+                                    <li>
+                                        <i class="la la-envelope"></i>
+                                        Email Address<br/>
+                                        <strong>{{customer.user.email}}</strong>
+                                    </li>
+                                    <li>
+                                        <i class="la la-credit-card"></i>
+                                        Card Info<br/>
+                                        <strong>**** **** **** {{card}}</strong>
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseEditCard" aria-expanded="false" aria-controls="collapseEditCard">Edit Card Info <i class="la la-edit"></i></button>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 collapse" id="collapseEditCard">
+                                <h6 class="mt-4 ml-4"><strong>Edit Card Info:</strong></h6>
+                                <form action="{% url 'subscriptions:update_card' %}" method="post" id="payment-form">{% csrf_token %}
+                                <div class="card-input-wrap m-4">
 
-                                <div class="col-md-12" id="stripe_card" style="display:none">
-                                    <form action="{% url 'subscriptions:update_card' %}" method="post" id="payment-form">{% csrf_token %}
-
-                                        <div class="card-input-wrap mt-4 mb-4">
-
-                                                <label for="card-element">
-                                                      Credit or debit card
-
-                                                    </label>
-                                                    <div id="card-element">
-                                                          <!-- a Stripe Element will be inserted here. -->
-
-
-                                                    </div>
-
-                                                    <!-- Used to display form errors -->
-                                                    <div id="card-errors" role="alert">
-
-                                                    </div>
-
-                                        <button type="submit" class="btn btn-primary">Update</button>
-
+                                        <label for="card-element">Credit or debit card</label>
+                                        <div id="card-element">
+                                            <!-- a Stripe Element will be inserted here. -->
                                         </div>
 
-                                    </form>
+                                        <!-- Used to display form errors -->
+                                        <div id="card-errors" role="alert"></div>
 
-                                    </div>
 
-                                </p>
-
-                                {% endif %}
+                                </div>
+                                    <button type="submit" class="btn btn-primary ml-4 mb-4">Save Info <i class="la la-save"></i></button>
+                                 </form>
                             </div>
-                            <div class="col-sm">
-                                <h6>Subscribed Package</h6>
-                                <p>Plan: {{subscribed_package.get_plan_display}}</p>
-                                <p>Total Submissions: {{subscribed_package.submissions}}</p>
 
-                                {% if not has_user_free_package %}
-                                    <p>Total Charge: ${{subscribed_package.total_charge}}/{{subscribed_package.get_period_type_display}}</p>
-                                    <p>Extra charge per submission: ${{subscribed_package.extra_submissions_charge}}</p>
-                                {% endif %}
-
-                                {% if not has_user_free_package %}
-                                    <p>Unlimited Users, Projects, Sites</p>
-                                 {% else %}
-                                    <p>15 Users, 2 Projects, 10 Sites</p>
-                                {% endif %}
-
-                                    <p>Unlimited Forms, Stages & Schedules</p>
-                                    <p>Unlimited Reports, Dashboards & Maps</p>
-                                {% if has_user_free_package %}
-
-                                    <p><a href="{% url 'fieldsight:organizations-dashboard' organization.id%}" class="btn btn-sm btn-primary">Upgrade Your Package</a></p>
-                                {% endif %}
-                            </div>
 
                           </div>
                         </div>
