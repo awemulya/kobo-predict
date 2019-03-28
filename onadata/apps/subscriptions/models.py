@@ -5,16 +5,16 @@ from onadata.apps.fieldsight.models import Organization
 
 PLAN_CHOICES = (
     (0, 'Free'),
-    (1, 'Basic Monthly'),
-    (2, 'Basic Yearly'),
-    (3, 'Extended Monthly'),
-    (4, 'Extended Yearly'),
-    (5, 'Pro Monthly'),
-    (6, 'Pro Yearly'),
-    (7, 'Scale Monthly'),
-    (8, 'Scale Yearly'),
-    (9, 'Starter Monthly'),
-    (10, 'Starter Yearly')
+    (1, 'Basic Monthly Plan'),
+    (2, 'Basic Yearly Plan'),
+    (3, 'Extended Monthly Plan'),
+    (4, 'Extended Yearly Plan'),
+    (5, 'Pro Monthly Plan'),
+    (6, 'Pro Yearly Plan'),
+    (7, 'Scale Monthly Plan'),
+    (8, 'Scale Yearly Plan'),
+    (9, 'Starter Monthly Plan'),
+    (10, 'Starter Yearly Plan')
 
 )
 

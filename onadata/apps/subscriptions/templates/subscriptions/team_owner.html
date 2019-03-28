@@ -3,6 +3,42 @@
 {% load filters %}
 {% block content %}
 
+{%block extracss %}
+
+    <style>
+         .StripeElement {
+          box-sizing: border-box;
+
+          height: 40px;
+
+          padding: 10px 12px;
+
+          border: 1px solid rgba(0,0,0,0.1);
+          border-radius: 3px;
+          background-color: white;
+
+          box-shadow: none;
+          -webkit-transition: box-shadow 150ms ease;
+          transition: box-shadow 150ms ease;
+        }
+
+
+
+        .StripeElement--focus {
+          box-shadow: 0 1px 3px 0 #cfd7df;
+        }
+
+        .StripeElement--invalid {
+          border-color: #fa755a;
+        }
+
+        .StripeElement--webkit-autofill {
+          background-color: #fefde5 !important;
+        }
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}
 			<div id="main-content" class="padding">
                 <nav aria-label="breadcrumb" role="navigation">
                     {% block breadcrumbs %}
@@ -37,20 +73,36 @@
 
                                 {% if not has_user_free_package %}
                                 <p>Card: **** **** **** {{card}}</p>
+                                <button onclick="toogleCard()" type="button" class="btn btn-primary pull-left" id="update_card">Update Your Card</button>
+                                <br>
 
-                                <form action="{% url 'subscriptions:update_card' %}" method="post">
-									  {% csrf_token %}
-									<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                        data-key="{{ key }}"
-                                        data-description="Update Your Card"
-                                        data-email="{{request.user.email}}"
+                                <div class="col-md-12" id="stripe_card" style="display:none">
+                                    <form action="{% url 'subscriptions:update_card' %}" method="post" id="payment-form">{% csrf_token %}
 
-                                        data-locale="auto" data-label="Update" data-panel-label="Update">
-                                    </script>
-									<button type="submit" class="btn btn-primary pull-left">Update Your Card</button>
+                                        <div class="card-input-wrap mt-4 mb-4">
 
-								</form>
+                                                <label for="card-element">
+                                                      Credit or debit card
 
+                                                    </label>
+                                                    <div id="card-element">
+                                                          <!-- a Stripe Element will be inserted here. -->
+
+
+                                                    </div>
+
+                                                    <!-- Used to display form errors -->
+                                                    <div id="card-errors" role="alert">
+
+                                                    </div>
+
+                                        <button type="submit" class="btn btn-primary">Update</button>
+
+                                        </div>
+
+                                    </form>
+
+                                    </div>
 
                                 </p>
 
@@ -93,11 +145,102 @@
 {%block extrascript %}
 
 <script>
+
+    function toogleCard() {
+          var stripe_card = document.getElementById("stripe_card");
+          var update_btn_txt = $('#update_card');
+          if (stripe_card.style.display === "none") {
+            stripe_card.style.display = "block";
+            update_btn_txt.html('Close Your Card');
+          } else {
+            stripe_card.style.display = "none";
+            update_btn_txt.html('Update Your Card');
+
+          }
+    }
     var totalSItems = document.getElementsByClassName("stripe-button-el");
 
 			for(i = 0; i<totalSItems.length; i++){
 				totalSItems[i].style.display = 'none';
 			}
+
+			 var stripe = Stripe('{{key}}');
+    		var elements = stripe.elements();
+
+		  // Create an instance of the card UI component
+			var card = elements.create('card', {
+			  'style': {
+				'base': {
+				  'fontFamily': 'Arial, sans-serif',
+				  'fontSize': '14px',
+				  'color': 'black',
+				},
+				'invalid': {
+				  'color': 'red',
+				},
+			  }
+			});
+
+			var style = {
+			  base: {
+				color: '#32325d',
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: 'antialiased',
+				fontSize: '16px',
+				'::placeholder': {
+				  color: '#aab7c4'
+				}
+			  },
+			  invalid: {
+				color: '#fa755a',
+				iconColor: '#fa755a'
+			  }
+			};
+
+		// Mount the UI card component into the `card-element` <div>
+		card.mount('#card-element');
+		function stripeTokenHandler(token) {
+		  // Insert the token ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeToken');
+		  hiddenInput.setAttribute('value', token.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+		  form.submit();
+		}
+
+	function createToken() {
+	  stripe.createToken(card).then(function(result) {
+		if (result.error) {
+		  // Inform the user if there was an error
+		  var errorElement = document.getElementById('card-errors');
+		  errorElement.textContent = result.error.message;
+		} else {
+		  // Send the token to your server
+		  stripeTokenHandler(result.token);
+		}
+	  });
+	};
+
+	// Create a token when the form is submitted.
+	var form = document.getElementById('payment-form');
+	form.addEventListener('submit', function(e) {
+	  e.preventDefault();
+	  createToken();
+	});
+
+	card.addEventListener('change', function(event) {
+	  var displayError = document.getElementById('card-errors');
+	  if (event.error) {
+		displayError.textContent = event.error.message;
+	  } else {
+		displayError.textContent = '';
+	  }
+	});
+
 </script>
 {% endblock %}
 
