@@ -1545,6 +1545,10 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
+        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+            context['is_read_only'] = False
+        else:
+            context['is_read_only'] = True
         return context
 
     def get_queryset(self, **kwargs):
@@ -1588,6 +1592,10 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+            context['is_read_only'] = False
+        else:
+            context['is_read_only'] = True
         # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
@@ -1955,7 +1963,7 @@ def download_jsonform(request,  fsxf_id):
         try:
             history = XformHistory.objects.get(xform=xform, version=version)
             json = history.json
-            print("his", json)
+            # print("his", json)
         except Exception as e:
             json = xform.json
     except Exception as e:
