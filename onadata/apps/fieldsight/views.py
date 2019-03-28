@@ -1343,7 +1343,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
         return queryset
 
 
-class SiteUserList(ListView): #ReviewerRoleMixin
+class SiteUserList(ReviewerRoleMixin, ListView):
     model = UserRole
     paginate_by = 50
     template_name = "fieldsight/user_list_updated.html"
