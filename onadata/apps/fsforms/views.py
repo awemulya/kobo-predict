@@ -1829,6 +1829,11 @@ class InstanceKobo(ConditionalFormMixin, View):
             is_read_only = False
         else:
             is_read_only = True
+
+        if self.request.group.name == "Project Donor":
+            is_doner = True
+        else:
+            is_doner = False
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1844,7 +1849,8 @@ class InstanceKobo(ConditionalFormMixin, View):
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
-            'is_readonly': is_read_only
+            'is_readonly': is_read_only,
+            'is_doner': is_doner
         }
         if site_id is not None:
             kwargs['site_id'] = site_id
