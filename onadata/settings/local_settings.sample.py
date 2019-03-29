@@ -86,3 +86,86 @@ SESSION_COOKIE_NAME = 'kobo_cookie'
 SESSION_COOKIE_DOMAIN = 'localhost'
 
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+
+# ........STRIPE CONFIG...............
+
+STRIPE_SECRET_KEY = '*********************'
+STRIPE_PUBLISHABLE_KEY = '*********************'
+
+stripe.verify_ssl_certs = False
+
+
+MONTHLY_PLANS = {
+         'free_plan': 'free',
+         'starter_plan': '*********************',
+         'basic_plan': '*********************',
+         'extended_plan': '*********************',
+         'pro_plan': '*********************',
+         'scale_plan': '*********************'
+        }
+
+
+MONTHLY_PLANS_OVERRAGE = {
+         'free_plan': 'free',
+         'starter_plan': '*********************',
+         'basic_plan': '*********************',
+         'extended_plan': '*********************',
+         'pro_plan': '*********************',
+         'scale_plan': '*********************'
+        }
+
+YEARLY_PLANS = {
+         'free_plan': 'free',
+         'starter_plan': '*********************',
+         'basic_plan': '*********************',
+         'extended_plan': '*********************',
+         'pro_plan': '*********************',
+         'scale_plan': '*********************'
+        }
+
+YEARLY_PLANS_OVERRAGE = {
+         'free_plan': 'free',
+         'starter_plan': '*********************',
+         'basic_plan': '*********************',
+         'extended_plan': '*********************',
+         'pro_plan': '*********************',
+         'scale_plan': '*********************'
+        }
+
+
+PLANS = {
+    'free': 0,                 # free
+    '*******************': 1,  # basic monthly plan
+    '******************': 2,  # basic yearly plan
+    '*****************': 3,  # extended monthly plan
+    '****************': 4,  # extended yearly plan
+    '***************': 5,  # pro monthly plan
+    '**************': 6,  # pro yearly plan
+    '*************': 7,  # scale monthly plan
+    '************': 8,  # scale yearly plan
+    '**********': 9,  # starter monthly plan
+    '********': 10  # starter yearly plan
+
+
+
+}
+# ..............END STRIPE CONFIG..............
+
+SITE_URL = 'http://localhost:8000'
+
+DEFAULT_FORM_2 = {
+    'id_string': 'atYfmSxxyCZhKb7gDHU4wt',
+    'name': 'Daily Site Diary - Default Form',
+    'type':'schedule '
+}
+
+DEFAULT_FORM_1 = {
+    'id_string': 'ahLRXcGG23uNkKYCm6empb',
+    'name': 'Health, Safety, Social and Environmental Inspection Report - Default Form',
+    'type':'schedule '
+}
+DEFAULT_FORM_3 = {
+    'id_string': 'azmvMmr4dP9Fyo8rVt654G',
+    'name': 'Incident Report',
+    'type':'general'
+}

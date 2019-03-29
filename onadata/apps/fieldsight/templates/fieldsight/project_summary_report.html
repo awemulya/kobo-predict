@@ -1,0 +1,249 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+{% load staticfiles %}    
+{% load i18n staticfiles %}
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+         <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+      <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
+      <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+      <link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
+    <script src="{% static 'dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+    <style>
+      @page { size: A4; margin: 50pt 0 60pt; }
+      @page:first { margin: 0; }
+      img { max-width: 100%; }
+      @media print{ div.frontcover{ display: block; } .mod-sec{ margin-top: 50pt; } }
+      .frontcover{ position: relative; display: none; } .frontcover img{ width: 100%; height: 100%; }
+      .cover-text{ position: absolute; z-index: 999; left: 50px; bottom: 30px; }
+      body{ -webkit-print-color-adjust: exact; }
+      div.page{ page-break-after: always; page-break-inside: avoid; }
+    </style>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        
+    <div class="text-center padding d-print-none">
+      <a href="javascript:void(0);" title="" onclick="window.print();" class="btn btn-sm btn-primary"><i class="la la-print"></i> Print Report</a>
+    </div>
+    <div class="frontcover">
+      <img src="{{ STATIC_URL }}dummy/assets/img/bg-report-cover.png">
+      <div class="cover-text">
+        <h5>{{ obj.name }}</h5>
+        <p>
+          {{ obj.address }}, {{ obj.get_country_display }}
+        </p>
+        <p>
+          <strong>Report Type : </strong>Summary
+        </p>
+      </div>
+    </div>
+
+
+    <div id="print-wrapper" class="bg-white">
+      <div class="page">
+        <span id="pageNum"></span>
+        <div class="org-intro margin-top clearfix">
+          <img src="{{ obj.logo.url }}" class="org-intro-logo" width="130" height="130">
+          <div class="org-intro-head">
+            <h3><strong>{{ obj.name }}</strong></h3>
+            <p>
+            {{ obj.address }}, {{ obj.get_country_display }}
+
+            </p>
+            <!-- <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"><span class="progress-bar-value">50% Completed</span></div>
+            </div> -->
+          </div>
+        </div>
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>Overview</strong></h5>
+          </div>
+          <div class="mod-sec-body">
+            <p>{{ obj.public_desc }}</p>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Phone :</strong>
+                  <span>{{ obj.phone }}</span>
+                </p>
+              </div>
+              <!-- <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Type :</strong>
+                  <span>None</span>
+                </p>
+              </div> -->
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Fax :</strong>
+                  <span>{{ obj.fax }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Email :</strong>
+                  <span>{{ obj.email }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Website :</strong>
+                  <span>{{ obj.website }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Donor :</strong>
+                  <span>{{ obj.donor }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Total Supervisors :</strong>
+                  <span>10</span>
+                </p>
+              </div>
+              
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>{% trans 'Total' %} {% trans 'Submissions:' %} :</strong>
+                  <span>{{ total_submissions }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>Submission Status</strong></h5>
+          </div>
+          <div class="mod-sec-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Rejected Submissions :</strong>
+                  <span>{{ rejected }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Flagged Submissions :</strong>
+                  <span>{{ flagged }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Pending Submissions :</strong>
+                  <span>{{ pending }}</span>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <p class="org-info-item">
+                  <strong>Approved Submissions :</strong>
+                  <span>{{ approved }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>{% trans 'Site' %} {% trans 'Map' %}</strong></h5>
+            
+          </div>
+          <div class="mod-sec-body">
+            <div id="map" class="full-map"></div>
+          </div>
+        </div>
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>{% trans 'Form' %} {% trans 'Submissions' %}</strong></h5>
+          </div>
+          <div class="mod-sec-body">
+             <canvas id="myChart" width="500px" height="250"></canvas>
+          </div>
+        </div>
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>{% trans 'Site' %} {% trans 'Progress' %}</strong></h5>
+          </div>
+          <div class="mod-sec-body">
+             <canvas id="myBar" width="500" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="mod-sec">
+          <div class="mod-sec-head">
+            <h5><strong>{% trans 'Project' %} {% trans 'Managers' %}</strong></h5>
+          </div>
+          <div class="mod-sec-body">
+            <table class="table table-bordered table-striped">
+                      <tr scope="row">
+                        <th><b>{% trans 'Full' %} {% trans 'Name' %}</b></th>
+                        <th><b>{% trans 'Email' %}</b></th>
+                        <th><b>{% trans 'Phone' %}</b></th>
+                      </tr>
+                      
+                      {% for manager in project_managers %}
+                        <tr scope="row">
+                <td>{{ manager.user.first_name }} {{ manager.user.last_name }}</td>
+                <td>{{ manager.user.email }}</td>
+                <td>{{ manager.user.profile.phone }}</td>
+                        </tr>
+                    {% endfor %}
+                    
+                    </table>
+            
+          </div>
+        </div>
+      </div>
+      <div class="backcover"></div>
+    </div>
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
+        <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/vendor/popper.min.js"></script>
+        <script src="{{ STATIC_URL }}dummy/assets/js/vendor/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}dummy/assets/js/vendor/leaflet.js"></script>
+        <script src="{{ STATIC_URL }}dummy/assets/js/plugins.js"></script>
+     
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
+  <!--script for slider pravin-slick-->
+      <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+      <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+      <script type="text/javascript">
+      var static_url ="{{ STATIC_URL }}";
+      var data = {{ data|safe}};
+      var cummulative_labels = {{ cumulative_labels|safe}};
+      var cummulative_data = {{ cumulative_data|safe}};
+      var progress_labels = {{ progress_labels|safe}};
+      var progress_data = {{ progress_data|safe}};
+      </script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>    
+      <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
+    </body>
+</html>

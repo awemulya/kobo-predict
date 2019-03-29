@@ -5,6 +5,8 @@ import os
 import re
 import six
 import tempfile
+from pyxform import SurveyElementBuilder
+from pyxform.xform2json import create_survey_element_from_xml
 from urlparse import urlparse
 from zipfile import ZipFile
 
@@ -39,8 +41,9 @@ from onadata.libs.utils.common_tags import (
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
-from onadata.apps.fsforms.models import FInstance
-
+from onadata.apps.fsforms.models import FInstance, XformHistory
+from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fieldsight.tasks import upload_to_drive
 # this is Mongo Collection where we will store the parsed submissions
 xform_instances = settings.MONGO_DB.instances
 
@@ -526,11 +529,17 @@ class ExportBuilder(object):
             i += 1
         return generated_name
 
-    def to_xls_export(self, path, data, username, id_string, *args):
+    def to_xls_export(self, path, data, username, id_string, filter_query):
         xform = XForm.objects.get(
         user__username__iexact=username, id_string__exact=id_string)
-        
-        json_question = json.loads(xform.json)
+        question_json = xform.json
+        try:
+            __version__ = filter_query['$and'][0]['__version__']
+            if __version__:
+                question_json = XformHistory.objects.get(xform=xform, version=__version__).json
+        except Exception as e:
+            print(str(e))
+        json_question = json.loads(question_json)
         parsedQuestions = get_questions_and_media_attributes(json_question['children'])
 
         from django.contrib.sites.models import Site as DjangoSite
@@ -743,6 +752,19 @@ def dict_to_flat_export(d, parent_index=0):
     pass
 
 
+def build_survey_from_history(xform, __version__):
+    if not XformHistory.objects.filter(xform=xform, version=__version__).exists():
+        return False
+    history = XformHistory.objects.get(xform=xform, version=__version__)
+    try:
+        builder = SurveyElementBuilder()
+        survey =  builder.create_survey_element_from_json(history.json)
+    except ValueError:
+        xml = bytes(bytearray(history.xml, encoding='utf-8'))
+        survey = create_survey_element_from_xml(xml)
+
+    return survey
+
 def generate_export(export_type, extension, username, id_string,
                     export_id=None, filter_query=None, group_delimiter='/',
                     split_select_multiples=True,
@@ -768,7 +790,20 @@ def generate_export(export_type, extension, username, id_string,
     export_builder.GROUP_DELIMITER = group_delimiter
     export_builder.SPLIT_SELECT_MULTIPLES = split_select_multiples
     export_builder.BINARY_SELECT_MULTIPLES = binary_select_multiples
-    export_builder.set_survey(xform.data_dictionary().survey)
+    __version__ = "0"
+    try:
+        __version__ = filter_query['$and'][0]['__version__']
+    except Exception as e:
+        print(str(e))
+    if __version__:
+        survey = build_survey_from_history(xform, __version__)
+        if not survey:
+            export_builder.set_survey(xform.data_dictionary().survey)
+        else:
+            export_builder.set_survey(survey)
+    else:
+        export_builder.set_survey(xform.data_dictionary().survey)
+    #todo version
 
     prefix = slugify('{}_export__{}__{}'.format(export_type, username, id_string))
     temp_file = NamedTemporaryFile(prefix=prefix, suffix=("." + extension))
@@ -777,7 +812,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, None)
+        temp_file.name, records, username, id_string, filter_query)
 
     # generate filename
     basename = "%s_%s" % (
@@ -801,15 +836,38 @@ def generate_export(export_type, extension, username, id_string,
     # TODO: if s3 storage, make private - how will we protect local storage??
     storage = get_storage_class()()
     # seek to the beginning as required by storage classes
+    
+    print 'file_url--------->', temp_file, filter_query
+
+    try:
+        if '__version__' not in filter_query['$and'][0]:
+            if not os.path.exists("media/forms/"):
+                os.makedirs("media/forms/")
+
+            temporarylocation="media/forms/submissions_{}.xls".format(id_string)
+            import shutil
+            shutil.copy(temp_file.name, temporarylocation)
+            fxf_form = FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid'])
+            if fxf_form.schedule:
+                name = fxf_form.schedule.name
+            elif fxf_form.stage:
+                name = fxf_form.stage.name
+            else:
+                name = fxf_form.xf.title
+            upload_to_drive(temporarylocation, name+'_'+id_string, str(fxf_form.id)+'_'+name+'_'+id_string, fxf_form.project)
+        
+            os.remove(temporarylocation)
+        
+    except Exception as e:
+        print e.__dict__
+    # get or create export object
     temp_file.seek(0)
     export_filename = storage.save(
         file_path,
         File(temp_file, file_path))
-    temp_file.close()
-
+    
     dir_name, basename = os.path.split(export_filename)
-
-    # get or create export object
+    temp_file.close()
     if export_id:
         export = Export.objects.get(id=export_id)
     else:
@@ -839,8 +897,6 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
     #     query = {"$and": [query, {"_deleted_at": None}]}
     # query = {"$and": [query, qry]}
     # print(query)
-    print("cpount", xform_instances.find(qry).count())
-    print("qry", qry)
     return xform_instances.find(qry)
 
 

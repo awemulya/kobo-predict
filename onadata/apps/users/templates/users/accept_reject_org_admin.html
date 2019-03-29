@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi {{ user.username }},
+Please click on the link to accept or reject,
+{{ domain }}{% url 'users:request_organization' org_id=org_id sender=sender %}
+{% endautoescape %}

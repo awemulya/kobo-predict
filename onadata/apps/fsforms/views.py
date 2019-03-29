@@ -1545,6 +1545,10 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
+        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+            context['is_read_only'] = False
+        else:
+            context['is_read_only'] = True
         return context
 
     def get_queryset(self, **kwargs):
@@ -1588,6 +1592,10 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+            context['is_read_only'] = False
+        else:
+            context['is_read_only'] = True
         # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
@@ -1817,6 +1825,15 @@ def alter_answer_status(request, instance_id, status, fsid):
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
     def get(self, request, fsxf_id, is_read_only, site_id=None):
+        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+            is_read_only = False
+        else:
+            is_read_only = True
+
+        if self.request.group.name == "Project Donor":
+            is_doner = True
+        else:
+            is_doner = False
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1832,7 +1849,8 @@ class InstanceKobo(ConditionalFormMixin, View):
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
-            'is_readonly': is_read_only
+            'is_readonly': is_read_only,
+            'is_doner': is_doner
         }
         if site_id is not None:
             kwargs['site_id'] = site_id
@@ -1948,22 +1966,21 @@ def download_jsonform(request,  fsxf_id):
     try:
         instance_id = request.get_full_path().split("/")[-1]
         instance_id = int(instance_id)
-        finstance = FInstance.objects.get(pk=instance_id)
+        finstance = FInstance.objects.get(instance=instance_id)
         fs_xform = finstance.fsxf
         version = finstance.version
-        xform = fs_xform.xform
+        xform = fs_xform.xf
         try:
             history = XformHistory.objects.get(xform=xform, version=version)
             json = history.json
+            # print("his", json)
         except Exception as e:
-            # no history
-            pass
+            json = xform.json
     except Exception as e:
         # no instance id in url
         fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
         xform = fs_xform.xf
         json = xform.json
-
     if request.method == "OPTIONS":
         response = HttpResponse()
         add_cors_headers(response)

@@ -10,6 +10,15 @@
 	.radio-div.card{
 		display: none;
 	}
+	.table-sync tbody tr td{
+   		vertical-align: middle;
+	}
+
+
+	.table-sync tbody tr td p{
+	   font-size: 12px;
+	   font-weight: normal;
+	}
 </style>
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
@@ -66,7 +75,7 @@ assigntoken(csrf_token);
 			  	<div class="modal-dialog modal-lg modal-xl" role="document">
 				    <div class="modal-content">
 				      	<div class="modal-header">
-				        	<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+				        	<h5 class="modal-title" id="exportModalLabel">Reports</h5>
 				        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				          		<span aria-hidden="true">&times;</span>
 				        	</button>
@@ -77,8 +86,11 @@ assigntoken(csrf_token);
 				      				<ul class="nav nav-pills flex-column" id="myTab" role="tablist">
 									  <li class="nav-item">
 									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true">
-									    	Standard Reports
+									    	Project Summary
 									    </a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab07-tab" data-toggle="tab" href="#modalTab07" role="tab" aria-controls="modalTab07" aria-selected="false">Site Information</a>
 									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
@@ -92,9 +104,9 @@ assigntoken(csrf_token);
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Project Logs</a>
 									  </li>
-									  <!-- <li class="nav-item">
-									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="" aria-selected="false">Standard Reports</a>
-									  </li> -->
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="" aria-selected="false"> G-Sheet Reports</a>
+									  </li>
 									</ul>
 				      			</div>
 				      			<div class="col-md-8 col-lg-9">
@@ -111,19 +123,13 @@ assigntoken(csrf_token);
 											                    Contains high level overview of the project in form of numbers, graphs and map.
 											              </p>
 											            </div>
+
 												</div>
-												<a type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success pull-right"> Generate </a>	
+
+												<a type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success"> Preview PDF</a>	
 
 											</div>
-											
 											<br>
-											<hr>
-
-											{% verbatim %}
-											<div id="generateSiteExportReport">
-											
-											</div>
-											{% endverbatim %}
 										</div>
 										<div class="tab-pane fade text-center" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
 											{% verbatim %}
@@ -152,10 +158,24 @@ assigntoken(csrf_token);
 											</div>
 											{% endverbatim %}
 										</div>
-										<!-- <div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
+										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
+											{% verbatim %}
+											<div id="driveLink">
+											
+											</div>
+											{% endverbatim %}
 											
 											
-										</div> -->
+										</div>
+										<div class="tab-pane fade" id="modalTab07" role="tabpanel" aria-labelledby="modalTab07-tab">
+											{% verbatim %}
+											<div id="generateSiteExportReport">
+											
+											</div>
+											{% endverbatim %}
+											
+											
+										</div>
 									</div>
 				      			</div>
 				      		</div>
@@ -614,6 +634,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.regions_url = "{% url 'fieldsight:project_regions_api' obj.pk %}";
 	configure_settings.site_types_url = "{% url 'fieldsight:project_site_types_api' obj.pk %}";
 	configure_settings.log_report_type = "Project";
+	configure_settings.gsuit_metas = {{ gsuit_meta_json|safe }};
 	//getlogdata();
 		
 			
@@ -659,8 +680,9 @@ var static_url ="{{ STATIC_URL }}";
 
 <link rel="stylesheet" href="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.css' %}">
 <script src="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.js' %}"></script>
-<script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
-<script src="{% static 'js/fieldsight/logs_xls_report.js' %}?v=0.1"></script>
-<script src="{% static 'js/fieldsight/site_export_report.js' %}?v=0.1"></script>
+<script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.2"></script>
+<script src="{% static 'js/fieldsight/logs_xls_report.js' %}?v=0.2"></script>
+<script src="{% static 'js/fieldsight/site_export_report.js' %}?v=0.2"></script>
+<script src="{% static 'js/fieldsight/gsuit_reports.js' %}?v=0.1"></script>
 
 {% endblock %}

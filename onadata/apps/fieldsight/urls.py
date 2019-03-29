@@ -63,9 +63,9 @@ from .views import (
     MultiUserAssignProjectView, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView,
     MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView,
-    DonorProjSiteList, response_export, FormlistAPI,
-    GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard,
-    DefineProjectSiteCriteria, AllResponseImages,
+    AssignUsersToRegionsView, RequestOrganizationSearchView,
+    AssignUsersToEntireProjectView, DonorProjSiteList, response_export, FormlistAPI, RecentResponseImages,
+    SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
     SiteSearchView, ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON,
     SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite,
     municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView,
@@ -238,6 +238,8 @@ urlpatterns = [
     url(r'^search-site-user/(?P<pk>\d+)/$', SiteUserSearchView.as_view(), name='search-site-user'),
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
+    url(r'^request-search-org/$', RequestOrganizationSearchView.as_view(), name='request-search-org-list'),
+
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
 
 
@@ -322,6 +324,5 @@ urlpatterns = [
     url(r'^api/project/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),    
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
 
-
-    ]
+]
 

@@ -10,7 +10,7 @@ class XlsWriter(object):
     def __init__(self):
         self.set_file()
         self.reset_workbook()
-        self.sheet_name_limit = 30
+        self.sheet_name_limit = 120
         self._generated_sheet_name_dict = {}
 
     def set_file(self, file_object=None):

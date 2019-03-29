@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import datetime
 import os, tempfile
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
@@ -15,12 +16,14 @@ from django.utils.text import slugify
 from jsonfield import JSONField
 from .static_lists import COUNTRIES
 from django.contrib.auth.models import Group
+from django.dispatch import receiver
 
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.serializers import serialize
 
 from django.db.models import Q
+
 
 class TimeZone(models.Model):
     time_zone = models.CharField(max_length=255, blank=True, null=True)
@@ -87,6 +90,7 @@ class Organization(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="organizations", null=True, blank=True)
 
     class Meta:
         ordering = ['-is_active', 'name', ]
@@ -149,6 +153,19 @@ class Organization(models.Model):
 
         return outstanding, flagged, approved, rejected
 
+    def get_submissions_count_by_date(self, start_date):
+        from onadata.apps.fsforms.models import FInstance
+        outstanding = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=0, date__range=[start_date, datetime.datetime.now()]).count()
+        rejected = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=1, date__range=[start_date, datetime.datetime.now()]).count()
+        flagged = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=2, date__range=[start_date, datetime.datetime.now()]).count()
+        approved = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=3, date__range=[start_date, datetime.datetime.now()]).count()
+
+        return outstanding, flagged, approved, rejected
+
     def get_absolute_url(self):
         return reverse('fieldsight:organizations-dashboard',
                        kwargs={'pk': self.pk})
@@ -203,6 +220,8 @@ class Project(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
+    gsuit_meta = JSONField(default={})
+    # gsuit_meta sample = {'site_progress':{'link':'', 'last_updated':''}}
     logs = GenericRelation('eventlog.FieldSightLog')
     all_objects = ProjectAllManager()
     objects = ProjectManager()
@@ -544,6 +563,7 @@ def get_survey_image_filename(instance, filename):
     slug = slugify(title)
     return "survey_images/%s-%s-%s" % (project, slug, filename)
 
+
 class BluePrints(models.Model):
     site = models.ForeignKey(Site, related_name="blueprints")
     image = models.FileField(upload_to=get_image_filename,
@@ -593,6 +613,7 @@ class UserInvite(models.Model):
         kwargs = {'invite_idb64': invite_idb64, 'token': self.token}
         return reverse('fieldsight:activate-role', kwargs=kwargs)
 
+
 class ProjectGeoJSON(models.Model):
     project = models.OneToOneField(Project, related_name="project_geojson")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -616,8 +637,12 @@ class ProjectGeoJSON(models.Model):
             self.save()
 
 
-
-
-
-
-    
+class RequestOrganizationStatus(models.Model):
+    by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='request_organization_by')
+    to_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='request_organization_to')
+    is_approve = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    organization = models.ForeignKey(Organization, related_name='request_org_status')
+    # logs = GenericRelation('eventlog.FieldSightLog')
