@@ -330,6 +330,7 @@ class MyProfile(LoginRequiredMixin, View):
 
             roles_org = user.user_roles.select_related('organization').filter(organization__isnull = False, project__isnull = True, site__isnull = True, ended_at__isnull=True, group__name="Organization Admin")
             roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True, group__name="Project Manager")
+            roles_doner = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True, group__name="Project Donor")
             roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
             roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
             roles_region_supervisor = user.user_roles.select_related('region').filter(organization__isnull=False, project__isnull=False, region__isnull=False, group__name="Region Supervisor", ended_at__isnull=True)
@@ -362,7 +363,8 @@ class MyProfile(LoginRequiredMixin, View):
                                                           'roles_site': roles_reviewer, 'roles_SA': roles_SA,
                                                           'roles_reviewer': roles_reviewer, 'responses': responses,
                                                           'roles_region_reviewer': roles_region_reviewer,
-                                                          'roles_region_supervisor': roles_region_supervisor
+                                                          'roles_region_supervisor': roles_region_supervisor,
+                                                          'roles_project_doner': roles_doner,
                                                           })
 
 

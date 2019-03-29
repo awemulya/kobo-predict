@@ -144,6 +144,41 @@
 								</div>
 							</div>
 							{% endif %}
+							{% if roles_project_doner %}
+							<div class="widget-info margin-top bg-white padding" >
+								<div class="widget-head">
+									<h4>{% trans 'Project Doner  At:' %}</h4>
+								</div>
+								<div class="widget-body">
+									<div class="max-260-scroll">
+										<div class="row">
+										{% for role in roles_project_doner %}
+
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
+												<div class="project-item-wrap clearfix">
+													<div class="project-logo">
+														<img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
+													</div>
+													<div class="project-basic-info">
+														<h4>{{ role.project.name }}</h4>
+														<p>{{ role.project.address }}</p>
+														<p><strong>{{ role.project.organization.name }}</strong></p>
+													</div>
+													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
+
+														<a class="btn btn-xs btn-sm btn-action btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}"><i class="la la-close"></i> Remove</a>
+													{% endif %}
+												</div>
+												</a>
+											</div>
+
+										{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endif %}
 
 							{% if roles_region_supervisor %}
 							<div class="widget-info margin-top bg-white padding">
@@ -321,7 +356,7 @@
 								</div>
 							</div> -->
 							{% endif %}				
-							{% if not roles_org and not roles_project and not roles_SA and not roles_reviewer  and not roles_region_supervisor and not roles_region_reviewer%}
+							{% if not roles_org and not roles_project and not roles_SA and not roles_reviewer  and not roles_region_supervisor and not roles_region_reviewer and not  roles_project_doner%}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>No Roles yet.</h4>
