@@ -34,6 +34,10 @@ types = {
     31 : type31,
     32 : type32,
     33 : type33,
+    37 : type37,
+    38 : type38,
+    39 : type39,
+    40 : type40,
     412: type412,
     421: type421,
     422: type422,
@@ -245,6 +249,25 @@ def type32(data):
 def type33(data):
     var formdetail = data.get_event_name.split("form")
     content =  data.source_name +' deleted a response submitted by '+ data.extra_json['submitted_by'] +' in '+ formdetail[0] +'form ' + formdetail[1] + ' in '+ data.extra_message +' ' + data.get_extraobj_name+'.'
+    return content
+
+
+def type37(data):
+    content =  data.source_name +' was added as the Region Reviewer of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+
+def type38(data):
+    content =  data.source_name +' was added as the Region Supervisor of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+def type39(data):
+    content =  data.source_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+
+def type40(data):
+    content =  data.source_name +' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
     return content
 
 
