@@ -57,7 +57,7 @@ def type1(data):
 
 
 def type2(data):
-    content =  data.source_name +' was added as the Project Manager ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    content =  data.source_name +' was added as the Project Manager of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 
@@ -253,12 +253,12 @@ def type33(data):
 
 
 def type37(data):
-    content =  data.source_name +' was added as the Region Reviewer of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    content =  data.source_name +' was added as the Region Reviewer in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 
 def type38(data):
-    content =  data.source_name +' was added as the Region Supervisor of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    content =  data.source_name +' was added as the Region Supervisor in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 def type39(data):
