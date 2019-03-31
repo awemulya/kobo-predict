@@ -1588,7 +1588,11 @@ class Project_html_export(ConditionalFormMixin, ListView):
 
     def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        site_id = int(self.kwargs.get('site_id'), 0)
+        site_id = 0
+        try:
+            site_id = int(site_id)
+        except:
+            pass
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context = {}
