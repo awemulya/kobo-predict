@@ -220,6 +220,7 @@ log_types = {
     '31': log_type31,
     '33': log_type33,
     '34': log_type34,
+    '36': log_type36,
     '37': log_type37,
     '38': log_type38,
     '39': log_type39,
