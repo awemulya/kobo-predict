@@ -1533,23 +1533,21 @@ class Html_export(ConditionalFormMixin, ListView):
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(Html_export, self).get_context_data(**kwargs)
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
+        context = {}
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
-        # if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
-        #     context['is_read_only'] = False
-        # else:
-        #     context['is_read_only'] = True
-        return context
+        context['is_read_only']  = is_read_only
+        context['object_list'] = self.get_queryset()
+        return render(request, self.template_name, context)
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
@@ -1588,20 +1586,20 @@ class Project_html_export(ConditionalFormMixin, ListView):
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(Project_html_export, self).get_context_data(**kwargs)
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
-            context['is_read_only'] = False
-        else:
-            context['is_read_only'] = True
         # context['pk'] = self.kwargs.get('pk')
-        context['is_project_data'] = True
+        context = {}
+        context['is_site_data'] = False
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
-        return context
+        context['is_read_only']  = is_read_only
+        context['object_list'] = self.get_queryset()
+        return render(request, self.template_name, context)
+
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
