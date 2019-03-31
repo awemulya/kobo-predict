@@ -185,7 +185,7 @@ def log_type39(data):
 
 
 def log_type40(data):
-    return data.first_name + ' ' + data.source.last_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
+    return data.source.first_name + ' ' + data.source.last_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
 
 
 log_types = {
