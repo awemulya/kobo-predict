@@ -168,49 +168,61 @@ def log_type34(data):
     return data.source.first_name + ' ' + data.source.last_name +' deleted '+ formdetail[1] +' with '+ str(data.extra_json['submission_count']) +' submissions in ' + data.extra_obj_name + '.'
     
 
-
 def log_type36(data):
     return data.source.first_name + ' ' + data.source.last_name +' deleted '+ data.extra_message +' named '+ data.event_name +' of '+ data.extra_obj_name +'.'
     
 
+def log_type37(data):
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Reviewer in region ' + data.event_name + ' by ' + data.extra_obj_name + '.'
+
+
+def log_type38(data):
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Supervisor in region ' + data.event_name + ' by ' + data.extra_obj_name + '.'
+
+
+def log_type39(data):
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.event_name + ' by ' + data.extra_obj_name + '.'
+
+
+def log_type40(data):
+    return data.source.first_name + ' ' + data.source.last_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.event_name + ' in ' + data.extra_obj_name + '.'
 
 
 log_types = {
-        0 : log_type0,
-        1 : log_type1,
-        2 : log_type2,
-        3 : log_type3,
-        4 : log_type4,
-        5 : log_type5,
-        6 : log_type6,
-        7 : log_type7,
-        8 : log_type8,
-        9 : log_type9,
-        10 : log_type10,
-        11 : log_type11,
-        12 : log_type12,
-        13 : log_type13,
-        14 : log_type14,
-        15 : log_type15,
-        16 : log_type16,
-        17 : log_type17,
-        18 : log_type18,
-        19 : log_type19,
-        20 : log_type20,
-        21 : log_type21,
-        22 : log_type22,
-        24 : log_type24,
-        25 : log_type25,
-        26 : log_type26,
-        27 : log_type27,
-        28 : log_type28,
-        31 : log_type31,
-        33 : log_type33,
-        34 : log_type34,
-        36 : log_type36,
-    }
-
-
-
-
-
+    '0' : log_type0,
+    '1' : log_type1,
+    '2' : log_type2,
+    '3' : log_type3,
+    '4' : log_type4,
+    '5' : log_type5,
+    '6' : log_type6,
+    '7' : log_type7,
+    '8' : log_type8,
+    '9' : log_type9,
+    '10': log_type10,
+    '11': log_type11,
+    '12': log_type12,
+    '13': log_type13,
+    '14': log_type14,
+    '15': log_type15,
+    '16': log_type16,
+    '17': log_type17,
+    '18': log_type18,
+    '19': log_type19,
+    '20': log_type20,
+    '21': log_type21,
+    '22': log_type22,
+    '24': log_type24,
+    '25': log_type25,
+    '26': log_type26,
+    '27': log_type27,
+    '28': log_type28,
+    '31': log_type31,
+    '33': log_type33,
+    '34': log_type34,
+    '36': log_type36,
+    '37': log_type37,
+    '38': log_type38,
+    '39': log_type39,
+    '40': log_type40,
+}
