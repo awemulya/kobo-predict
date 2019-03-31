@@ -1533,7 +1533,7 @@ class Html_export(ConditionalFormMixin, ListView):
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
@@ -1586,7 +1586,7 @@ class Project_html_export(ConditionalFormMixin, ListView):
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
