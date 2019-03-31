@@ -492,11 +492,12 @@ class ConditionalFormMixin(LoginRequiredMixin):
         if request.roles.filter(project_id=project_id, group__name="Reviewer").exists():
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
-        if request.roles.filter(project_id=project_id, group__name="Site Supervisor").exists():
+        if request.roles.filter(project_id=project_id, group__name__in=["Reviewer", "Region Reviewer"]).exists():
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
-        if request.roles.filter(project_id=project_id, group__name__in=["Region Supervisor", "Region Reviewer"]).exists():
-            return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
+        if request.roles.filter(project_id=project_id, group__name__in=["Site Supervisor", "Region Supervisor"]).exists():
+            return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=True, *args, **kwargs)
+
 
         organization_id = Project.objects.get(pk=project_id).organization.id
         user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
