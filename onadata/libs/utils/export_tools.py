@@ -423,7 +423,7 @@ class ExportBuilder(object):
             site_id = row['fs_site']
             site = Site.objects.get(pk=site_id)
         except Exception as e:
-            print(str(e)," **************** NO Site")
+            pass
             # print(str(row))
             row['site_name'] = ""
             row['address'] = ""
