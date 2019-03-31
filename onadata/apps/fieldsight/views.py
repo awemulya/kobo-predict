@@ -1867,7 +1867,7 @@ class SiteSummaryReport(LoginRequiredMixin, TemplateView):
             'project': project,
             'supervisor' : supervisor,
             'reviewer' : reviewer,
-            'metas': generateSiteMetaAttribs(pk),
+            'metas': generateSiteMetaAttribs(obj.id),
             'recent_images': three_recent_imgs,
             'total_submissions': line_chart_data.values()[-1],
 
