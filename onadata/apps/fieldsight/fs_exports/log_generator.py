@@ -172,68 +172,68 @@ def log_type36(data):
     return data.source.first_name + ' ' + data.source.last_name +' deleted '+ data.extra_message +' named '+ data.event_name +' of '+ data.extra_obj_name +'.'
     
 
-def type37(data):
+def log_type37(data):
     content =  data.source_name +' was added as the Region Reviewer in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 
-def type38(data):
+def log_type38(data):
     content =  data.source_name +' was added as the Region Supervisor in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
-def type39(data):
+def log_type39(data):
     content =  data.source_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 
-def type40(data):
+def log_type40(data):
     content =  data.source_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
     return content
 
 
 types = {
-    '0' : type0,
-    '1' : type1,
-    '2' : type2,
-    '3' : type3,
-    '4' : type4,
-    '5' : type5,
-    '6' : type6,
-    '7' : type7,
-    '8' : type8,
-    '9' : type9,
-    '10': type10,
-    '11': type11,
-    '12': type12,
-    '13': type13,
-    '14': type14,
-    '15': type15,
-    '16': type16,
-    '17': type17,
-    '18' : type18,
-    '19' : type19,
-    '20' : type20,
-    '21' : type21,
-    '22' : type22,
-    '23' : type23,
-    '24' : type24,
-    '25' : type25,
-    '26' : type26,
-    '27' : type27,
-    '28' : type28,
-    '29' : type29,
-    '30' : type30,
-    '31' : type31,
-    '32' : type32,
-    '33' : type33,
-    '37': type37,
-    '38': type38,
-    '39': type39,
-    '40': type40,
-    '412': type412,
-    '421': type421,
-    '422': type422,
-    '429': type429,
-    '423' : type430,
-    '432' : type432,
+    '0' : log_type0,
+    '1' : log_type1,
+    '2' : log_type2,
+    '3' : log_type3,
+    '4' : log_type4,
+    '5' : log_type5,
+    '6' : log_type6,
+    '7' : log_type7,
+    '8' : log_type8,
+    '9' : log_type9,
+    '10': log_type10,
+    '11': log_type11,
+    '12': log_type12,
+    '13': log_type13,
+    '14': log_type14,
+    '15': log_type15,
+    '16': log_type16,
+    '17': log_type17,
+    '18': log_type18,
+    '19': log_type19,
+    '20': log_type20,
+    '21': log_type21,
+    '22': log_type22,
+    '23': log_type23,
+    '24': log_type24,
+    '25': log_type25,
+    '26': log_type26,
+    '27': log_type27,
+    '28': log_type28,
+    '29': log_type29,
+    '30': log_type30,
+    '31': log_type31,
+    '32': log_type32,
+    '33': log_type33,
+    '37': log_type37,
+    '38': log_type38,
+    '39': log_type39,
+    '40': log_type40,
+    '412': log_type412,
+    '421': log_type421,
+    '422': log_type422,
+    '429': log_type429,
+    '423': log_type430,
+    '432': log_type432,
 }
