@@ -25,7 +25,7 @@ def events(request):
             logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             if request.project:
                 pid = request.project.id
-        elif request.group.name in ["Reviewer", "Site Supevisor"]:
+        elif request.group.name in ["Reviewer", "Site Supervisor"]:
             logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             if request.site:
                 sid = request.site.id
