@@ -227,10 +227,4 @@ types = {
     '38': log_type38,
     '39': log_type39,
     '40': log_type40,
-    '412': log_type412,
-    '421': log_type421,
-    '422': log_type422,
-    '429': log_type429,
-    '423': log_type430,
-    '432': log_type432,
 }
