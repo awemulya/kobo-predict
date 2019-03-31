@@ -1,16 +1,35 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
-
-{% block head %}
-{% endblock %}
-
 {% block content %}
-title :{{object.title}}
-Created by : {{object.user}}
+{% load filters %}
+		<div id="main-content" class="padding">
+			{% block breadcrumbs %}
+			{% endblock %}
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Form Detail' %}{% endblock %}</h3>
+                    </header>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-4 col-sm-6">
+								<div class="organization-item-wrap  margin-top clearfix" data-mh="org-item">
+									<div class="logo">
+										<img src="https://image.flaticon.com/icons/png/512/66/66138.png" alt="" width="80" height="80">
+									</div>
+									<div class="basic-info">
+										<h4>{{ object.id_string }}</h4>
+										<p>{{ object.title }}</p>
+										<p>{{ object.date_created }}</p>
+									</div>
+									<div class="action-button margin-top">
+										<a class="btn btn-success btn-sm btn-xs" target="_blank" href="{% url 'forms:preview' object.id_string %}" style="height:27px"><i class="la la-eye"></i> {% trans 'Preview ' %} </a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
 
-<a href="{{ koboform_url }}#/forms/{{ object.id_string }}">{{ object.title }}</a>
-
+			</div>
 {% endblock %}

@@ -1528,24 +1528,26 @@ class FullResponseTable(ReadonlyFormMixin, View):
 #     context['obj'] = fsxf
 #     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-class Html_export(ReadonlyFormMixin, ListView):
+class Html_export(ConditionalFormMixin, ListView):
     model =   FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(Html_export, self).get_context_data(**kwargs)
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
+        context = {}
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
-        return context
+        context['is_read_only']  = is_read_only
+        context['object_list'] = self.get_queryset()
+        return render(request, self.template_name, context)
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
@@ -1579,21 +1581,29 @@ class Html_export(ReadonlyFormMixin, ListView):
         return new_queryset
 
 
-class Project_html_export(ReadonlyFormMixin, ListView):
+class Project_html_export(ConditionalFormMixin, ListView):
     model = FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(Project_html_export, self).get_context_data(**kwargs)
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = 0
+        try:
+            site_id = int(site_id)
+        except:
+            pass
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
-        context['is_project_data'] = True
+        context = {}
+        context['is_site_data'] = False
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
-        return context
+        context['is_read_only']  = is_read_only
+        context['object_list'] = self.get_queryset()
+        return render(request, self.template_name, context)
+
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
@@ -1816,7 +1826,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_read_only, site_id=None):
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1832,7 +1842,8 @@ class InstanceKobo(ConditionalFormMixin, View):
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
-            'is_readonly': is_read_only
+            'is_readonly': is_read_only,
+            'is_doner': is_doner
         }
         if site_id is not None:
             kwargs['site_id'] = site_id
@@ -1955,7 +1966,7 @@ def download_jsonform(request,  fsxf_id):
         try:
             history = XformHistory.objects.get(xform=xform, version=version)
             json = history.json
-            print("his", json)
+            # print("his", json)
         except Exception as e:
             json = xform.json
     except Exception as e:

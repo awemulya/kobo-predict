@@ -94,6 +94,9 @@
             <a class="badge badge-primary" href="{% url 'forms:view_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View
                 <i class="la la-eye"></i></a>
           </td>
+           {% if is_read_only %}
+           <td colspan="2"></td>
+           {% else %}
            <td>
             <a class="badge badge-success" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit
              <i class="la la-edit"></i></a>
@@ -103,6 +106,7 @@
             <!-- <a class="badge badge-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete -->
              <!-- <i class="la la-close"></i></a></span> -->
           </td>
+           {% endif  %}
         </tr>
         <div class="modal fade" id="modal-delete{{ forloop.counter }}" role="dialog">
             <div class="modal-dialog">
@@ -169,23 +173,32 @@
            <i class="la la-eye"></i></a>
         </td>
           <td>
+              {% if not  is_read_only %}
           <a class="badge badge-success" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit
            <i class="la la-edit"></i></a>
+              {% endif %}
         </td>
         {% else %}
         <td>
             <a class="badge badge-primary" href="{% url 'forms:view_data' sub.site_fxf.xf.id_string sub.instance.id %}" target="_blank">View
              <i class="la la-eye"></i></a>
           </td>
+
             <td>
+                {% if not  is_read_only %}
             <a class="badge badge-success" href="{% url 'forms:edit_data' sub.site_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit
              <i class="la la-edit"></i></a>
+                {% endif %}
           </td>
         {% endif %}
+          {% if is_read_only %}
+           <td></td>
+           {% else %}
         <td>
             <a class="badge badge-danger" href="" data-toggle="modal" data-target="#modal-delete{{ forloop.counter }}"> {% trans 'Delete' %}<i class="la la-close"></i></a>
             <!-- <a class="badge badge-danger"href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete <i class="la la-close"></i></a></span> -->
         </td>
+          {% endif %}
       </tr>
       <div class="modal fade" id="modal-delete{{ forloop.counter }}" role="dialog">
           <div class="modal-dialog">

@@ -1342,10 +1342,12 @@ class ProjUserList(ProjectRoleMixin, ListView):
         queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
         return queryset
 
+
 class SiteUserList(ReviewerRoleMixin, ListView):
     model = UserRole
     paginate_by = 50
     template_name = "fieldsight/user_list_updated.html"
+
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -1353,8 +1355,11 @@ class SiteUserList(ReviewerRoleMixin, ListView):
         context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
         context['type'] = "site"
         return context
+
     def get_queryset(self):
-        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
+        project = Site.objects.get(pk=self.kwargs.get('pk')).project
+        queryset = UserRole.objects.filter(ended_at__isnull=True).filter(
+            Q(site_id=self.kwargs.get('pk')) | Q(region__project=project)).select_related('user').distinct('user_id')
     
         return queryset
 
