@@ -1528,7 +1528,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
 #     context['obj'] = fsxf
 #     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-class Html_export(ReadonlyFormMixin, ListView):
+class Html_export(ConditionalFormMixin, ListView):
     model =   FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
@@ -1545,10 +1545,10 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
-        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
-            context['is_read_only'] = False
-        else:
-            context['is_read_only'] = True
+        # if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
+        #     context['is_read_only'] = False
+        # else:
+        #     context['is_read_only'] = True
         return context
 
     def get_queryset(self, **kwargs):
@@ -1583,7 +1583,7 @@ class Html_export(ReadonlyFormMixin, ListView):
         return new_queryset
 
 
-class Project_html_export(ReadonlyFormMixin, ListView):
+class Project_html_export(ConditionalFormMixin, ListView):
     model = FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
@@ -1824,16 +1824,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_read_only, site_id=None):
-        if self.request.group.name in ["Organization Admin", "Project Manager", "Reviewer", "Region Reviewer"]:
-            is_read_only = False
-        else:
-            is_read_only = True
-
-        if self.request.group.name == "Project Donor":
-            is_doner = True
-        else:
-            is_doner = False
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=None):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
