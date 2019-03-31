@@ -173,22 +173,19 @@ def log_type36(data):
     
 
 def log_type37(data):
-    content =  data.source_name +' was added as the Region Reviewer in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
-    return content
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Reviewer in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
 
 
 def log_type38(data):
-    content =  data.source_name +' was added as the Region Supervisor in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
-    return content
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Supervisor in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+
 
 def log_type39(data):
-    content =  data.source_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
-    return content
+    return data.source.first_name + ' ' + data.source.last_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
 
 
 def log_type40(data):
-    content =  data.source_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
-    return content
+    return data.first_name + ' ' + data.source.last_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
 
 
 log_types = {
