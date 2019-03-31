@@ -1586,20 +1586,15 @@ class Project_html_export(ConditionalFormMixin, ListView):
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
+    def get(self, request, fsxf_id, is_read_only=True, is_doner=True):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        site_id = 0
-        try:
-            site_id = int(site_id)
-        except:
-            pass
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-        # context['pk'] = self.kwargs.get('pk')
         context = {}
-        context['is_site_data'] = False
+        context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
+        context['site_id'] = 0
         context['is_read_only']  = is_read_only
         context['object_list'] = self.get_queryset()
         return render(request, self.template_name, context)
