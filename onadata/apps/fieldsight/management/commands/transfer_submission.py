@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
 import pandas as pd
+import datetime
 
 from onadata.apps.fieldsight.models import Project
 from onadata.apps.fsforms.models import FInstance
@@ -62,6 +63,8 @@ def process_delete_submission(xl, to_delete_sheet):
     for i in range(len(df.values)):
         submission_ids.append(df.values[i][0])
     result = FInstance.objects.filter(instance__id__in=submission_ids).update(is_deleted=True)
+
+    #settings.MONGO_DB.instances.update({"_id": {"$in": submission_ids}}, {"$set": {'_deleted_at':  datetime.datetime.now()}}, multi=True)
     print(result)
 
 
