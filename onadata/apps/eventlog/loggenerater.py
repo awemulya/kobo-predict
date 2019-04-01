@@ -1,45 +1,49 @@
 
 types = {
-    0 : type0,
-    1 : type1,
-    2 : type2,
-    3 : type3,
-    4 : type4,
-    5 : type5,
-    6 : type6,
-    7 : type7,
-    8 : type8,
-    9 : type9,
-    10 : type10,
-    11 : type11,
-    12 : type12,
-    13 : type13,
-    14 : type14,
-    15 : type15,
-    16 : type16,
-    17 : type17,
-    18 : type18,
-    19 : type19,
-    20 : type20,
-    21 : type21,
-    22 : type22,
-    23 : type23,
-    24 : type24,
-    25 : type25,
-    26 : type26,
-    27 : type27,
-    28 : type28,
-    29 : type29,
-    30 : type30,
-    31 : type31,
-    32 : type32,
-    33 : type33,
-    412: type412,
-    421: type421,
-    422: type422,
-    429: type429,
-    423: type430,
-    432 : type432,
+    '0' : type0,
+    '1' : type1,
+    '2' : type2,
+    '3' : type3,
+    '4' : type4,
+    '5' : type5,
+    '6' : type6,
+    '7' : type7,
+    '8' : type8,
+    '9' : type9,
+    '10': type10,
+    '11': type11,
+    '12': type12,
+    '13': type13,
+    '14': type14,
+    '15': type15,
+    '16': type16,
+    '17': type17,
+    '18' : type18,
+    '19' : type19,
+    '20' : type20,
+    '21' : type21,
+    '22' : type22,
+    '23' : type23,
+    '24' : type24,
+    '25' : type25,
+    '26' : type26,
+    '27' : type27,
+    '28' : type28,
+    '29' : type29,
+    '30' : type30,
+    '31' : type31,
+    '32' : type32,
+    '33' : type33,
+    '37': type37,
+    '38': type38,
+    '39': type39,
+    '40': type40,
+    '412': type412,
+    '421': type421,
+    '422': type422,
+    '429': type429,
+    '423' : type430,
+    '432' : type432,
 }
 
 
@@ -53,7 +57,7 @@ def type1(data):
 
 
 def type2(data):
-    content =  data.source_name +' was added as the Project Manager ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    content =  data.source_name +' was added as the Project Manager of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
     return content
 
 
@@ -245,6 +249,25 @@ def type32(data):
 def type33(data):
     var formdetail = data.get_event_name.split("form")
     content =  data.source_name +' deleted a response submitted by '+ data.extra_json['submitted_by'] +' in '+ formdetail[0] +'form ' + formdetail[1] + ' in '+ data.extra_message +' ' + data.get_extraobj_name+'.'
+    return content
+
+
+def type37(data):
+    content =  data.source_name +' was added as the Region Reviewer in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+
+def type38(data):
+    content =  data.source_name +' was added as the Region Supervisor in region ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+def type39(data):
+    content =  data.source_name +' was added as the Region Reviewer in ' + data.extra_message + ' of ' + data.get_event_name + ' by ' + data.get_extraobj_name + '.'
+    return content
+
+
+def type40(data):
+    content =  data.source_name + ' was added as the Region Supervisor in ' + data.extra_message + ' of ' + data.get_event_name + ' in ' + data.get_extraobj_name + '.'
     return content
 
 

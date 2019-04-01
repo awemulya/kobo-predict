@@ -333,7 +333,7 @@ class Region(models.Model):
     #         return site_count
 
     def getname(self):
-        return self.name
+        return self.name or self.identifier
 
     def get_absolute_url(self):
         return reverse('fieldsight:regional-sites', kwargs={'pk': self.project.pk, 'region_id': self.pk})

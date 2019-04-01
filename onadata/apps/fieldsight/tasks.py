@@ -1914,7 +1914,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
             day_time = day_time.strftime('%A, %-I:%-M %p')
 
             if log.type == 15:
-                log_text, sub_log_text  = local_log_types[log.type](log)    
+                log_text, sub_log_text  = local_log_types[str(log.type)](log)    
                 row_data = [log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text]
                 
                 ws.append(row_data)
@@ -1923,7 +1923,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
                         ws.append(sub_log)
             
             else:                
-                log_text = local_log_types[log.type](log)
+                log_text = local_log_types[str(log.type)](log)
                 ws.append([log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text])
 
         wb.save(buffer)

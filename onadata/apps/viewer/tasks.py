@@ -91,7 +91,7 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
     return None
 
 
-@shared_task(time_limit=120, soft_time_limit=120)
+@shared_task(time_limit=5, soft_time_limit=5)
 def create_xls_export(username, id_string, export_id, query=None,
                       force_xlsx=True, group_delimiter='/',
                       split_select_multiples=True,
