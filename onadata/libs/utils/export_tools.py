@@ -387,7 +387,7 @@ class ExportBuilder(object):
         except ValueError:
             return value
 
-    def pre_process_row(self, row, section):
+    def pre_process_row(self, row, section, postgres_data={}):
         # print(type(row),"Row##################################")
         """
         Split select multiples, gps and decode . and $
@@ -420,8 +420,12 @@ class ExportBuilder(object):
                 row[elm['xpath']] = ExportBuilder.convert_type(
                     value, elm['type'])
         try:
-            site_id = row['fs_site']
-            site = Site.objects.get(pk=site_id)
+            site_id = int(row['fs_site'])
+            site = postgres_data['sites'].get(site_id)
+            row['site_name'] = site.get("name", "")
+            row['address'] = site.get("address", "")
+            row['phone'] = site.get("phone", "")
+            row['identifier'] = site.get("identifier", "")
         except Exception as e:
             pass
             # print(str(row))
@@ -429,12 +433,6 @@ class ExportBuilder(object):
             row['address'] = ""
             row['phone'] = ""
             row['identifier'] = ""
-
-        else:
-            row['site_name'] = site.name
-            row['address'] = site.address
-            row['phone'] = site.phone
-            row['identifier'] = site.identifier
         return row
 
     def to_zipped_csv(self, path, data, *args):
@@ -530,15 +528,40 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, username, id_string, filter_query):
-        xform = XForm.objects.get(
-        user__username__iexact=username, id_string__exact=id_string)
-        question_json = xform.json
+        __version__ = None
         try:
             __version__ = filter_query['$and'][0]['__version__']
+        except Exception as e:
+            print(str(e))
+        submission_status_dict = {0: 'Pending', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
+
+        xform = XForm.objects.get(
+        user__username__iexact=username, id_string__exact=id_string)
+
+        question_json = xform.json
+        try:
             if __version__:
                 question_json = XformHistory.objects.get(xform=xform, version=__version__).json
         except Exception as e:
             print(str(e))
+
+        fxf_form = FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid'])
+        if __version__:
+            submissions = fxf_form.project_form_instances.filter(version=__version__).select_related("site").values("form_status", "instance", "site", "site__name", "site__address", "site__phone", "site__identifier")
+        else:
+            submissions =fxf_form.project_form_instances.select_related("site").values("form_status", "instance","site", "site__name", "site__address", "site__phone", "site__identifier")
+        [s for s in submissions] # query db
+
+        postgres_data = {
+                'sites': {},
+                 'username': username,
+                 'status_display': {}
+                 }
+        for s in submissions:
+            if s['site'] not in postgres_data['sites']:
+                postgres_data['sites'][s['site']] = {"name":s['site__name'], "address":s['site__address'], "identifier":s['site__identifier'], "phone":s['site__phone']}
+            postgres_data['status_display'][s['instance']] = submission_status_dict.get(s['form_status'])
+
         json_question = json.loads(question_json)
         parsedQuestions = get_questions_and_media_attributes(json_question['children'])
 
@@ -553,14 +576,15 @@ class ExportBuilder(object):
             data_new = []
             for f in fields:
                     if f in data and f in parsedQuestions.get('media_attributes'):
-                        data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                        data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+postgres_data['username']+'/attachments/'+data.get(f)+'", "Attachment")')
                     else:
                         if f == "fs_status":
                             try:
-                                status=FInstance.objects.get(instance_id=data.get('_id')).get_form_status_display()
+                                status_display = postgres_data['status_display'].get(data.get('_id'), "No Status")
+                                # status_display=FInstance.objects.get(instance_id=data.get('_id')).get_form_status_display()
                             except:
-                                status="No Status"
-                            data_new.append(status)
+                                status_display="No Status"
+                            data_new.append(status_display)
                         else:         
                             data_new.append(data.get(f,''))
             work_sheet.append(data_new)
@@ -614,12 +638,12 @@ class ExportBuilder(object):
                 row = output.get(section_name, None)
                 if type(row) == dict:
                     write_row(
-                        self.pre_process_row(row, section),
+                        self.pre_process_row(row, section, postgres_data),
                         ws, fields, work_sheet_titles)
                 elif type(row) == list:
                     for child_row in row:
                         write_row(
-                            self.pre_process_row(child_row, section),
+                            self.pre_process_row(child_row, section, postgres_data),
                             ws, fields, work_sheet_titles)
             index += 1
 
@@ -803,7 +827,6 @@ def generate_export(export_type, extension, username, id_string,
             export_builder.set_survey(survey)
     else:
         export_builder.set_survey(xform.data_dictionary().survey)
-    #todo version
 
     prefix = slugify('{}_export__{}__{}'.format(export_type, username, id_string))
     temp_file = NamedTemporaryFile(prefix=prefix, suffix=("." + extension))
