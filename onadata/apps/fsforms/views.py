@@ -1545,7 +1545,7 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['obj'] = fsxf
         if site_id != 0:
             context['site_id'] = site_id
-        allow_group_list = ['Organization Admin', 'Project Manager', 'Reviewer',  'Region Reviewer']
+        allow_group_list = ['Organization Admin', 'Project Manager']
         if fsxf.site is not None:
             project = fsxf.site.project_id
         else:
@@ -1605,7 +1605,7 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
-        allow_group_list = ['Organization Admin', 'Project Manager', 'Reviewer', 'Region Reviewer']
+        allow_group_list = ['Organization Admin', 'Project Manager']
         project = fsxf.project_id
         higher_roles = self.request.roles.filter(project_id=project, group__name__in=allow_group_list)
         if higher_roles:
