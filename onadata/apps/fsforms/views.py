@@ -1528,26 +1528,25 @@ class FullResponseTable(ReadonlyFormMixin, View):
 #     context['obj'] = fsxf
 #     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-class Html_export(ConditionalFormMixin, ListView):
+class Html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get(self, request, fsxf_id, is_read_only=True, is_doner=True, site_id=0):
+    def get_context_data(self, **kwargs):
+        context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
-        context = {}
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
+        context['is_read_only'] = False
         if site_id != 0:
             context['site_id'] = site_id
-        context['is_read_only']  = is_read_only
-        context['object_list'] = self.get_queryset()
-        return render(request, self.template_name, context)
+        return context
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
@@ -1561,7 +1560,7 @@ class Html_export(ConditionalFormMixin, ListView):
         if query:
             if not fsxf.from_project:
                 new_queryset = FInstance.objects.filter(
-                    Q(site_fxf=fsxf_id) & 
+                    Q(site_fxf=fsxf_id) &
                     (
                         Q(submitted_by__first_name__icontains=query)|
                         Q(submitted_by__last_name__icontains=query)
@@ -1569,7 +1568,7 @@ class Html_export(ConditionalFormMixin, ListView):
                     )
             else:
                 new_queryset = FInstance.objects.filter(
-                    Q(project_fxf=fsxf_id) & 
+                    Q(project_fxf=fsxf_id) &
                     (
                         Q(submitted_by__first_name__icontains=query)|
                         Q(submitted_by__last_name__icontains=query)
@@ -1577,28 +1576,26 @@ class Html_export(ConditionalFormMixin, ListView):
                     )
 
         else:
-            new_queryset = queryset.order_by('-id') 
+            new_queryset = queryset.order_by('-id')
         return new_queryset
 
 
-class Project_html_export(ConditionalFormMixin, ListView):
+class Project_html_export(ReadonlyFormMixin, ListView):
     model = FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
-    def get(self, request, fsxf_id, is_read_only=True, is_doner=True):
+    def get_context_data(self, **kwargs):
+        context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-        context = {}
+        # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
-        context['site_id'] = 0
-        context['is_read_only']  = is_read_only
-        context['object_list'] = self.get_queryset()
-        return render(request, self.template_name, context)
-
+        context['is_read_only'] = False
+        return context
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
@@ -1606,18 +1603,17 @@ class Project_html_export(ConditionalFormMixin, ListView):
         queryset = FInstance.objects.filter(project_fxf=fsxf_id)
         if query:
             new_queryset = FInstance.objects.filter(
-                Q(project_fxf=fsxf_id) & 
+                Q(project_fxf=fsxf_id) &
                 (
-                    Q(site__name__icontains=query) | 
-                    Q(site__identifier__icontains=query) | 
+                    Q(site__name__icontains=query) |
+                    Q(site__identifier__icontains=query) |
                     Q(submitted_by__first_name__icontains=query)|
                     Q(submitted_by__last_name__icontains=query)
                 )
                 )
         else:
-            new_queryset = queryset.order_by('-id') 
+            new_queryset = queryset.order_by('-id')
         return new_queryset
-
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
