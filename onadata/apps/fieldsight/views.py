@@ -1240,6 +1240,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
 
         context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager", staff_project__is_deleted = False)
         context['unassigned'] = self.request.roles.filter(group__name="Unassigned")
+        context['has_user_profile'] = UserProfile.objects.filter(user=self.request.user).exists()
 
         if Team.objects.filter(leader_id = self.request.user.id).exists():
             context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id, is_deleted=False)

@@ -398,8 +398,11 @@
 		                    </header>
 							<div class="panel-body">
 								<div class="panel-heading">
-                                  You do not have any roles.<a href="{% url 'users:view_invitations' request.user.pk %}"> Please View your invitations</a>
-
+                                    {%  if has_user_profile %}
+                                        You do not have any roles.<a href="{% url 'users:view_invitations' request.user.pk %}"> Please View your invitations</a>
+                                    {% else %}
+                                        Please Update Your Profile. <a href="{% url 'users:create_profile' %}">Update Profile</a>
+                                    {% endif %}
 								</div>
 							</div>
 		                </section>
