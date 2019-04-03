@@ -334,7 +334,8 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
     def get_context_data(self, is_supervisor_only, **kwargs):
         # dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj =  get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
-        peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
+        peoples_involved = UserRole.objects.filter(ended_at__isnull=True).filter(
+            Q(site=obj) | Q(region__project=obj.project)).select_related('user').distinct('user_id').count()
         data = serialize('custom_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
@@ -350,8 +351,6 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
-
-
 
         result = get_images_for_sites_count(obj.id)
         
