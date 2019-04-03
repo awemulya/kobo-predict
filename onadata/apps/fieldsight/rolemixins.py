@@ -468,6 +468,7 @@ class ReadonlyFormMixin(LoginRequiredMixin):
 #returns "is_readonly" attribute either True or False so make sure to use it to determine readonly features in view or template.
 class ConditionalFormMixin(LoginRequiredMixin):
     def dispatch(self, request, fsxf_id, *args, **kwargs):
+        #todo check region roles
         is_doner = False
         if request.group.name == "Super Admin":
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id,*args, is_read_only= False,  **kwargs)
@@ -488,9 +489,6 @@ class ConditionalFormMixin(LoginRequiredMixin):
         user_role = request.roles.filter(project_id = project_id, group_id=2)
         if user_role:
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id,  *args, is_read_only= False,**kwargs)
-
-        if request.roles.filter(project_id=project_id, group__name="Reviewer").exists():
-            return super(ConditionalFormMixin, self).dispatch(request, fsxf_id,  *args,  is_read_only=False,  **kwargs)
 
         if request.roles.filter(project_id=project_id, group__name__in=["Reviewer", "Region Reviewer"]).exists():
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id,  *args,  is_read_only=False, **kwargs)
