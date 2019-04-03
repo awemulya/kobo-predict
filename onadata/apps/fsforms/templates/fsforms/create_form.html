@@ -92,51 +92,57 @@
 		    {% endblock %}
         </ol>
     </nav>
-     {% verbatim %}
-              <script type="x/template" id="modal-template">
-                <transition name="modal">
-                    <div class="modal-mask" @click="close" v-show="show">
-                        <div class="modal-container" @click.stop>
-                          <slot></slot>
+    {% if has_user_profile %}
+         {% verbatim %}
+                  <script type="x/template" id="modal-template">
+                    <transition name="modal">
+                        <div class="modal-mask" @click="close" v-show="show">
+                            <div class="modal-container" @click.stop>
+                              <slot></slot>
+                            </div>
                         </div>
-                    </div>
-                </transition>
-                </script>
-              <script type="x/template" id="new-show-time-modal-template">
-                    <modal :show="show" @close="close">
-                        <div class="modal-header">
-                        New Site Type
-                        </div>
-                        <div class="modal-body">
-                              <form>
-                                <div class="form-group>">
-                                    <div class="col-sm-12" v-show="error">
-                                    <small id="err" class="text-danger">
-                                        {{error}}
-                                    </small>
-                                </div>
-                                </div>
+                    </transition>
+                    </script>
+                  <script type="x/template" id="new-show-time-modal-template">
+                        <modal :show="show" @close="close">
+                            <div class="modal-header">
+                            New Site Type
+                            </div>
+                            <div class="modal-body">
+                                  <form>
+                                    <div class="form-group>">
+                                        <div class="col-sm-12" v-show="error">
+                                        <small id="err" class="text-danger">
+                                            {{error}}
+                                        </small>
+                                    </div>
+                                    </div>
 
-                                  <div class="form-group">
-                                    <input type="number" class="form-control" id="identifier" placeholder="ID" v-model="new_type_id">
-                                  </div>
+                                      <div class="form-group">
+                                        <input type="number" class="form-control" id="identifier" placeholder="ID" v-model="new_type_id">
+                                      </div>
 
-                                  <div class="form-group">
-                                    <input type="text" class="form-control" id="name" placeholder="Type" v-model="new_type_name">
-                                  </div>
+                                      <div class="form-group">
+                                        <input type="text" class="form-control" id="name" placeholder="Type" v-model="new_type_name">
+                                      </div>
 
-                            <a  href="javascript:void(0)" v-show="new_type_name.length>0 && new_type_id" class="btn btn-default" v-on:click="saveNewEntry()">Save</a>
-                            </form>
+                                <a  href="javascript:void(0)" v-show="new_type_name.length>0 && new_type_id" class="btn btn-default" v-on:click="saveNewEntry()">Save</a>
+                                </form>
 
-                        </div>
-                    </modal>
-                </script>
+                            </div>
+                        </modal>
+                    </script>
 
 
-    <div id="app">
+        <div id="app">
 
-    </div>
-    {% endverbatim %}
+        </div>
+        {% endverbatim %}
+
+        {% else %}
+            Please Update Your Profile. <a href="{% url 'users:create_profile' %}">Update Profile</a>
+
+    {% endif %}
 </div>
 
 
