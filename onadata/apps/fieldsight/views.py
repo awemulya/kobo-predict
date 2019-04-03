@@ -2711,11 +2711,14 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
             task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), regions)
             task_obj.task_id = task.id
             task_obj.save()
-            status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
-        else:
-            status, data = 401, {'status':'false','message':'Error occured please try again.'}
-        return JsonResponse(data, status=status)
+            #status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
+            messages.info(request, 'The sites details xls file is being generated. You will be notified after the file is generated.')
 
+        else:
+            #status, data = 401, {'status':'false','message':'Error occured please try again.'}
+            messages.info(request, 'Error occured please try again.')
+
+        return HttpResponseRedirect(reverse('fieldsight:site-upload', kwargs={'pk': project.pk}))
 
     def write_site(self, row, site, ws):
         columns = [
