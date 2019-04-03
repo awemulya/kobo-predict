@@ -30,6 +30,7 @@ from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.fieldsight.models import Site, Project
+from onadata.apps.users.models import UserProfile
 from onadata.apps.fsforms.reports_util import delete_form_instance, get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
@@ -2258,6 +2259,8 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
         token, created = Token.objects.get_or_create(user=self.request.user)
         data["token_key"] = token
         data["kpi_url"] = settings.KPI_URL
+        data['has_user_profile'] = UserProfile.objects.filter(user=self.request.user).exists()
+
         return data
 
 class DeleteFInstance(FInstanceRoleMixin, View):
