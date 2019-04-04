@@ -1737,6 +1737,17 @@ def instance_status(request, instance):
             return Response({'error': "This Detail Data is missing in Postgres DB"}, status=status.HTTP_400_BAD_REQUEST)
         fi = FInstance.objects.get(instance__id=instance)
         if request.method == 'POST':
+            site = fi.site
+            if site:
+                has_acess = False
+                if request.roles.filter(site=site, group__name="Reviewer") or request.roles.filter(region=site.region, group__name="Region Reviewer"):
+                    has_acess = True
+                elif request.roles.filter(project=site.project, group__name="Project Manager") or \
+                    request.roles.filter(organization=site.project.organization, group__name="Organization Admin") or request.roles.filter(group__name="Super Admin"):
+                    has_acess = True
+                if not has_acess:
+                    return Response({'error': "You are not permitted to change Status of this Submission"}, status=status.HTTP_400_BAD_REQUEST)
+
             with transaction.atomic():
                 submission_status = request.data.get("status", 0)
                 message = request.data.get("message", "")
