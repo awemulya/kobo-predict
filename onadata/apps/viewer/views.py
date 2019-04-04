@@ -314,7 +314,7 @@ def create_export(request, username, id_string, export_type, is_project=None, id
         if fsxf.site:
             query = {"fs_uuid": str(id)}
         else:
-            query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
+            query = {"fs_project_uuid": str(id), "fs_site": site_id}
     force_xlsx = True
     if version not in ["0", 0]:
         query["__version__"] = version
@@ -398,6 +398,7 @@ def _get_google_token(request, redirect_to_url):
 
 
 def export_list(request, username, id_string, export_type, is_project=0, id=0, site_id=0, version="0"):
+    site_id = int(site_id)
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
         token = _get_google_token(request, redirect_url)
