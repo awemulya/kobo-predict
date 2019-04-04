@@ -64,7 +64,7 @@ input::-webkit-input-placeholder {
 												  	<div class="form-group">
 												    	<label for="inputEmail">Email address
 														</label>
-												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail" placeholder="Username or email" required>
+												    	<input type="text" class="form-control {% if not valid_email %}is-invalid{% endif %}" value="{% if login_username %} {{login_username}}{% endif %}" name="username" id="inputEmail" placeholder="Username or email" required>
 														{% if email_error %}
 														<div id="emailHelp" class="invalid-feedback">
 															{{ email_error }}
@@ -79,7 +79,7 @@ input::-webkit-input-placeholder {
 												    	<label for="inputPassword">Password</label>
 
 														<div class="input-group input-pass-showhide {% if password_error %}is-invalid{% endif %}"> 
-															<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword" placeholder="e.g., ********" required>
+															<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" value="{% if login_password %}{{login_password}}{% endif %}" id="inputPassword" placeholder="e.g., ********" required>
 															
 															<div class="input-group-append" data-placement="right" data-toggle="tooltip" title="Show Password">
 														    	<span class="input-group-text" ><i class="la la-eye-slash"></i></span>

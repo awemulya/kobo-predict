@@ -3,6 +3,15 @@
 
 {% block page-title %}{{ scenario }} {% trans 'Site' %}{% endblock %}
 {%block extracss %}
+<style>
+    .alert {
+        position: fixed;
+        top: 130px;
+        right: 30px;
+        z-index: 999;
+        max-width:400px;
+}
+</style>
 {% endblock %}
 {% block head %}
 <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' project %}">{% trans 'Sites' %}</a>
@@ -20,10 +29,27 @@
         </ol>
         {% endblock %}
     </nav>
+        {% if messages %}
+
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{message.tags}} {% endif %}">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            ×</button>
+                        <span class="glyphicon glyphicon-info-sign"></span> <strong>Message</strong>
+                        <hr class="message-inner-separator">
+                        <p>
+                            {{message}}</p>
+                    </div>
+                {% endfor %}
+
+        {% endif %}
+
+
     <section class="panel">
         <header class="panel-heading clearfix">
             <h3><i class="la la-files-o"></i>{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</h3>
         </header>
+
         <div class="panel-body">
 
             <div class="download-section">
@@ -45,7 +71,7 @@
                         <option value="{{ region.id }}">{{ region.name }}</option>
                         {% endfor %}
                     </select>
-                    <a id="download-for-edit" href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">
+                    <a id="download-for-edit" href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}">
                         {% trans 'Download' %} {% trans 'Excel' %} {% trans 'File' %}
                     </a>
                 </fieldset>

@@ -1,6 +1,11 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
+
+{% block extracss %}
+
+
+{% endblock %}
 {% block content %}
 {% load filters %}
 <link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
@@ -111,6 +116,7 @@
 									<div class="form-group col-md-6 {% if field.errors %} alert alert-danger {% endif %}">
 
 									  <label class="col-form-label">{{ field.label }}</label>
+                                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
 
                                         {% if field.name == "geo_layers" %}
                                         {{ field|add_class:"form-control selectize" }}
@@ -127,11 +133,11 @@
 									 {% endfor %}
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Latitude :</label>
-									  <input type="text" class="form-control LatLon" id="Latitude" name="Latitude" />
+									  <input type="number"  step="0.000000000000001" class="form-control LatLon" id="Latitude" name="Latitude" />
 									</div>
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Longitude :</label>
-									  <input type="text" class="form-control LatLon" id="Longitude" name="Longitude" />
+									  <input type="number"  step="0.000000000000001" class="form-control LatLon" id="Longitude" name="Longitude" />
 									</div>
 
 									<div class="form-group col-md-12">
@@ -210,6 +216,7 @@
      var static_url ="{{ STATIC_URL }}";
      var elat = "{{form.instance.latitude}}";
      var elong = "{{form.instance.longitude}}";
+
     </script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 

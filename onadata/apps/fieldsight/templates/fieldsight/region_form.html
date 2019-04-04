@@ -45,6 +45,7 @@
 									<div class="form-group col-md-6">
 
 									  <label class="col-form-label">{{ field.label }}:     {% if field.label == "Identifier"  %}{{ parent_identifier }}<span id=extra_identifier>{{ current_identifier }}</span>{% endif %}</label>
+                                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
 
                                         {{ field|add_class:"form-control" }}
 									</div>
@@ -102,6 +103,7 @@
 $( "#id_identifier" ).keyup(function(event) {
   $( "#extra_identifier" ).html($( this ).val());
 });
+
 </script>
 {% endblock %}
 

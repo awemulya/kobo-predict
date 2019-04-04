@@ -444,7 +444,8 @@ def web_login(request):
                                   {'form': form,
                                    'email_error': "Your Account is Deactivated, Please Contact Administrator.",
                                    'valid_email': valid_email,
-                                   'login_username':username
+                                   'login_username':username,
+                                   'login_password': pwd,
                                    })
             else:
                 if valid_email:
@@ -458,7 +459,8 @@ def web_login(request):
                                'valid_email': valid_email,
                                'email_error': email_error,
                                'password_error': password_error,
-                               'login_username':username
+                               'login_username':username,
+                               'login_password':pwd,
                                })
         else:
             if request.POST.get('login_username') != None:
@@ -470,6 +472,7 @@ def web_login(request):
                 'valid_email': False,
                 'email_error': "Your Email and Password Didnot Match.",
                 'login_username':login_username,
+                'login_password': request.POST.get('password', ""),
                 })
     else:
         form = LoginForm()

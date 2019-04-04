@@ -3,6 +3,12 @@
 {% load filters %}
 
 {% block extracss %}
+<style>
+    label.required::after {
+    content: ' *';
+    color: red;
+}
+</style>
 {% endblock %}
 
 {%block kocript %}
@@ -49,6 +55,6 @@
         </section>
     </div>
 {% endblock %}
-{%block extrascript %}
+{% block extrascript %}
 
 {% endblock %}
