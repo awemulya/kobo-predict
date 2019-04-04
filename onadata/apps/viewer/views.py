@@ -427,7 +427,7 @@ def export_list(request, username, id_string, export_type, is_project=0, id=0, s
             if fsxf.site:
                 query = {"fs_uuid": str(id)}
             else:
-                query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
+                query = {"fs_project_uuid": str(id), "fs_site": site_id}
         force_xlsx = True
         if version not in ["0", 0]:
             query["__version__"] = version
