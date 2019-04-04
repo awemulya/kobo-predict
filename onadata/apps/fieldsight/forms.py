@@ -443,6 +443,8 @@ class RegionForm(forms.ModelForm):
 
 
 class SiteTypeForm(forms.ModelForm):
+    required_css_class = 'required'
+
     class Meta:
         model = SiteType
         exclude = ('project','deleted')

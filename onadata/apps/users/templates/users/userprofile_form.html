@@ -97,6 +97,7 @@
 									<div class="form-group col-md-6">
 
 									  <label class="col-form-label">{{ field.label }}</label>
+                                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                                       <label class="col-form-label">{{ field.errors }}</label>
 
                                         {{ field|add_class:"form-control" }}
@@ -145,7 +146,11 @@
                 </section>
 			</div>
 {% endblock %}
-{%block extrascript %}
+{% block extrascript %}
 <script src="{{ STATIC_URL }}js/cropper.min.js"></script>
+<script>
+          $('input.required').closest('.form-group').find('label').addClass('required');
+
+</script>
 {% endblock %}
 
