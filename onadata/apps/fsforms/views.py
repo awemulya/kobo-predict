@@ -1982,15 +1982,19 @@ def download_jsonform(request,  fsxf_id):
         instance_id = request.get_full_path().split("/")[-1]
         instance_id = int(instance_id)
         finstance = FInstance.objects.get(instance=instance_id)
-        fs_xform = finstance.fsxf
-        version = finstance.version
-        xform = fs_xform.xf
-        try:
-            history = XformHistory.objects.get(xform=xform, version=version)
-            json = history.json
-            # print("his", json)
-        except Exception as e:
-            json = xform.json
+        #hack
+        xform =  finstance.instance.xform #hack version less
+        json = xform.json #hack version less
+        # end hack
+        # fs_xform = finstance.fsxf
+        # version = finstance.version
+        # xform = fs_xform.xf
+        # try:
+        #     history = XformHistory.objects.get(xform=xform, version=version)
+        #     json = history.json
+        #     # print("his", json)
+        # except Exception as e:
+        #     json = xform.json
     except Exception as e:
         # no instance id in url
         fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
