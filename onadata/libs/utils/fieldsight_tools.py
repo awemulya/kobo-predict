@@ -36,7 +36,7 @@ def deploy_kpi_form(id_string, headers):
 
 def clone_kpi_form(id_string, token, task_id, name="Default Form Mahabharat"):
     if not hasattr(settings, 'KPI_ASSET_URL'):
-        return False
+        raise ValueError('Missing KPI_ASSET_URL')
 
     url = settings.KPI_ASSET_URL
     values = {
@@ -48,7 +48,6 @@ def clone_kpi_form(id_string, token, task_id, name="Default Form Mahabharat"):
                'Authorization': 'Token ' + token}
     req = requests.post(url, data=json.dumps(values),
                         headers=headers, verify=False)
-    print(req.status_code, "status code")
     if req.status_code in [200, 201]:
         try:
             id_string = req.__dict__['headers']['location'].split("/")[-2]
@@ -60,22 +59,16 @@ def clone_kpi_form(id_string, token, task_id, name="Default Form Mahabharat"):
             deploy = deploy_kpi_form(id_string, headers)
             if not deploy:
                 task_obj = CeleryTaskProgress.objects.get(id=task_id)
-                task_obj.other_fields.update({'Deploy Default Form': req.status_code})
+                task_obj.other_fields.update({'Deploy ' + name: req.status_code})
+                task_obj.status = 3
                 task_obj.save()
+                raise KPIError("Failed deploy  form  ", name)
             else:
                 return True, id_string
     else:
         task_obj = CeleryTaskProgress.objects.get(id=task_id)
-        task_obj.other_fields.update({'Clone Defualt Form': req.status_code})
+        task_obj.other_fields.update({'Clone ' + name: req.status_code})
+        task_obj.status = 3
         task_obj.save()
-        try:
-            # import ipdb
-            # ipdb.set_trace()
-            response = req.json()
-            print(req.json(), "*NOt 200 code*")
-        except ValueError:
-            pass
-        else:
-            if 'error' in response:
-                raise KPIError(response['message'])
+        raise KPIError("Failed clone of  form  ", name)
     return False, None

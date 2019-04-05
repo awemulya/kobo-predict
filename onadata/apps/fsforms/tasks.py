@@ -134,57 +134,31 @@ def clone_form(user, project, task_id):
     clone1, id_string1 = clone_kpi_form(settings.DEFAULT_FORM_3['id_string'], token, task_id, settings.DEFAULT_FORM_3['name'])
     if clone1:
         xf = XForm.objects.get(id_string=id_string1, user=user)
-        fxf, created = FieldSightXF.objects.get_or_create(xf=xf, project=project, is_deployed=True)
+        FieldSightXF.objects.get_or_create(xf=xf, project=project, is_deployed=True)
     else:
-        # send email to admins for unsuccessful form clone or deployment
-        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
-        # to_email = ''
-        # mail_subject = 'Error in deploying and cloning form'
-        # for key, value in task_obj.other_fields.items():
-        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
-        # email = EmailMessage(
-        #     mail_subject, message, to=[to_email]
-        # )
-        # email.send()
-        pass
+        CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
+        raise ValueError(" Failed  clone adn deploy")
 
-    #schedule 1
     clone2, id_string2 = clone_kpi_form(settings.DEFAULT_FORM_2['id_string'], token, task_id, settings.DEFAULT_FORM_2['name'])
     if clone2:
         xf2 = XForm.objects.get(id_string=id_string2, user=user)
         schedule, created = Schedule.objects.get_or_create(name =settings.DEFAULT_FORM_2['name'], project=project)
-        fxf2, created = FieldSightXF.objects.get_or_create(xf=xf2, project=project, is_scheduled=True, schedule=schedule, is_deployed=True)
+        FieldSightXF.objects.get_or_create(xf=xf2, project=project, is_scheduled=True, schedule=schedule, is_deployed=True)
     else:
-        # send email to admins for unsuccessful form clone or deployment
-        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
-        # to_email = ''
-        # mail_subject = 'Error in deploying and cloning form'
-        # for key, value in task_obj.other_fields.items():
-        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
-        # email = EmailMessage(
-        #     mail_subject, message, to=[to_email]
-        # )
-        # email.send()
-        pass
+        CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
+        raise ValueError(" Failed  clone adn deploy")
 
     clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_1['id_string'], token, task_id, settings.DEFAULT_FORM_1['name'])
     if clone3:
         xf3 = XForm.objects.get(id_string=id_string3, user=user)
         schedule2, created2 = Schedule.objects.get_or_create(name=settings.DEFAULT_FORM_1['name'], project=project, schedule_level_id=1)
-        fxf3, created = FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True,
+        FieldSightXF.objects.get_or_create(xf=xf3, project=project, is_scheduled=True,
                                                            schedule=schedule2, is_deployed=True)
     else:
-        # send email to admins for unsuccessful form clone or deployment
-        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
-        # to_email = ''
-        # mail_subject = 'Error in deploying and cloning form'
-        # for key, value in task_obj.other_fields.items():
-        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
-        # email = EmailMessage(
-        #     mail_subject, message, to=[to_email]
-        # )
-        # email.send()
-        pass
+        CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
+        raise ValueError(" Failed  clone adn deploy")
+    CeleryTaskProgress.objects.filter(id=task_id).update(status=2)
+
 
 
 # @shared_task(max_retries=10)
