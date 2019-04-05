@@ -411,6 +411,7 @@ def publish_form(callback):
         # errors if we try to catch it so let's catch it, BUT reraise it
         # if we don't see typical ODK validation error messages in it.
         if u"ODK Validate Errors" not in e.message:
+            print("Error in publish xform :  ", str(e))
             raise
 
         # error in the XLS file; show an error to the user
