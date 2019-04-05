@@ -95,6 +95,19 @@
 						{% endif %}
                          
                     </header>
+					{% if messages %}
+
+						{% for message in messages %}
+							<div class="alert alert-{% if message.tags %}{{message.tags}} {% endif %}">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+									×</button>
+								<hr class="message-inner-separator">
+								<p>
+									{{message}}</p>
+							</div>
+							{% endfor %}
+
+        			{% endif %}
 					<div class="panel-body">
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
