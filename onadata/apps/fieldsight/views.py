@@ -809,6 +809,20 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
+
+        existing_identifier = Site.objects.filter(identifier=form.cleaned_data.get('identifier'),
+                                                    project_id=self.kwargs.get('pk'))
+        if existing_identifier:
+            messages.add_message(self.request, messages.INFO,
+                                 'Your identifier conflict with existing site please use different identifier to create site')
+
+            return HttpResponseRedirect(reverse(
+                'fieldsight:site-add',
+                kwargs={
+                    'pk': self.kwargs.get('pk'),
+                }
+            ))
+
         self.object = form.save(project_id=self.kwargs.get('pk'), new=True)
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
@@ -850,9 +864,24 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
     def form_valid(self, form):
         site = Site.objects.get(pk=self.kwargs.get('pk'))
         old_meta = site.site_meta_attributes_ans
+        previous_identifier = Site.objects.get(pk=self.kwargs.get('pk')).identifier
+
+        existing_identifier = Site.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.object.project_id)
+        check_identifier = previous_identifier == form.cleaned_data.get('identifier')
+
+        if not check_identifier and existing_identifier:
+            messages.add_message(self.request, messages.INFO, 'Your identifier "' + form.cleaned_data.get(
+                'identifier') + '" conflict with existing site please use different identifier to update site')
+            return HttpResponseRedirect(reverse(
+                'fieldsight:site-edit',
+                kwargs={
+                    'pk': self.object.pk,
+                }
+            ))
 
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
         new_meta = json.loads(self.object.site_meta_attributes_ans)
+
 
         extra_json = None
         if old_meta != new_meta:
