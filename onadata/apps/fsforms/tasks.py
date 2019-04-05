@@ -18,7 +18,7 @@ from onadata.libs.utils.fieldsight_tools import clone_kpi_form
 from django.core.mail import EmailMessage
 
 
-@shared_task(max_retries=10, soft_time_limit=4200)
+@shared_task(max_retries=10, soft_time_limit=60)
 def copy_allstages_to_sites(pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -32,7 +32,7 @@ def copy_allstages_to_sites(pk):
         raise copy_allstages_to_sites.retry(countdown=seconds_to_wait)
 
 
-@shared_task(max_retries=10, soft_time_limit=4200)
+@shared_task(max_retries=10, soft_time_limit=60)
 def copy_stage_to_sites(main_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -63,7 +63,7 @@ def copy_stage_to_sites(main_stage, pk):
         # First countdown will be 1.0, then 2.0, 4.0, etc.
         raise copy_stage_to_sites.retry(countdown=seconds_to_wait)
 
-@shared_task(max_retries=10, soft_time_limit=4200)
+@shared_task(max_retries=10, soft_time_limit=60)
 def copy_sub_stage_to_sites(sub_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -93,7 +93,7 @@ def copy_sub_stage_to_sites(sub_stage, pk):
         # First countdown will be 1.0, then 2.0, 4.0, etc.
         raise copy_sub_stage_to_sites.retry(countdown=seconds_to_wait)
 
-@shared_task(max_retries=10, soft_time_limit=3200)
+@shared_task(max_retries=10, soft_time_limit=60)
 def copy_schedule_to_sites(schedule, fxf_status, pk):
     try:
         fxf = schedule.schedule_forms
@@ -137,7 +137,7 @@ def clone_form(user, project, task_id):
         FieldSightXF.objects.get_or_create(xf=xf, project=project, is_deployed=True)
     else:
         CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
-        raise ValueError(" Failed  clone adn deploy")
+        raise ValueError(" Failed  clone and deploy")
 
     clone2, id_string2 = clone_kpi_form(settings.DEFAULT_FORM_2['id_string'], token, task_id, settings.DEFAULT_FORM_2['name'])
     if clone2:
@@ -146,7 +146,7 @@ def clone_form(user, project, task_id):
         FieldSightXF.objects.get_or_create(xf=xf2, project=project, is_scheduled=True, schedule=schedule, is_deployed=True)
     else:
         CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
-        raise ValueError(" Failed  clone adn deploy")
+        raise ValueError(" Failed  clone and deploy")
 
     clone3, id_string3 = clone_kpi_form(settings.DEFAULT_FORM_1['id_string'], token, task_id, settings.DEFAULT_FORM_1['name'])
     if clone3:
@@ -156,7 +156,7 @@ def clone_form(user, project, task_id):
                                                            schedule=schedule2, is_deployed=True)
     else:
         CeleryTaskProgress.objects.filter(id=task_id).update(status=3)
-        raise ValueError(" Failed  clone adn deploy")
+        raise ValueError(" Failed  clone and deploy")
     CeleryTaskProgress.objects.filter(id=task_id).update(status=2)
 
 
