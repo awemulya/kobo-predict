@@ -110,6 +110,8 @@
 									{% if not field.label == 'Project' %}
 									<div class="form-group col-md-6 {% if field.errors %} alert alert-danger {% endif %}">
 									  <label class="col-form-label">{{ field.label }}</label>
+										{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+
 									 {{ field|add_class:"form-control" }}
 									 {{ field.errors }}
                    
@@ -518,6 +520,7 @@
      var static_url ="{{ STATIC_URL }}";
      var elat = "{{form.instance.latitude}}";
      var elong = "{{form.instance.longitude}}";
+
     </script>
 
 

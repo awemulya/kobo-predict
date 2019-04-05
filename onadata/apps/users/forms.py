@@ -57,6 +57,11 @@ class SignUpForm(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data['username']
+        
+        for letter in username:
+            if letter.isupper():
+                raise ValidationError('Username must only include small letters')
+
         if User.objects.filter(username=username):
             raise ValidationError('User with this username already exists')
         else:
