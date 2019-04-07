@@ -25,10 +25,12 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         try:
             device = Device.objects.get(dev_id=serializer.data["dev_id"])
+
         except Device.DoesNotExist:
             device = Device(dev_id=serializer.data["dev_id"])
-        device.is_active = True
-        device.reg_id = serializer.data["reg_id"]
+            device.is_active = True
+
+            device.reg_id = serializer.data["reg_id"]
         user = User.objects.filter(email__iexact=serializer.data["name"])
         if user:
             device.name = user[0].email
