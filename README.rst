@@ -1,19 +1,21 @@
 *****
-FieldSight
+Predict
 *****
-FieldSight is a platform, built on top of  `KoBoToolbox <https://fieldsight.org>`_.It enables field-based staff to collect information and communicate directly with project managers and engineers to track construction progress in real-time and identify and fix errors as they occur. Designed to work off-line and at scale, FieldSight is specifically targeted for humanitarian and development projects.
+Collect the data
 
-*****
-Learn more about FieldSight
-*****
-FieldSight website: `https://fieldsight.org <https://fieldsight.org>`_
+
+Predict from the Data
+
+Advice from the Reports
+
+
 
 Code Structure
 --------------
-* **fieldsight** - This app is the base for organization project sites hierarchy, and people involved in them.
+* **core** - This app is the base for organization project sites hierarchy, and people involved in them.
 
 
-* **fsforms** - This app is the base for forms Categories like Stages, Survey, General, Schedules forms.
+* **forms** - This app is the base for forms Categories like Stages, Survey, General, Schedules forms.
 
 
 * **logger** - This app serves XForms to and receives submissions from
