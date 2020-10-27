@@ -22,7 +22,7 @@ channels==1.1.3
 chardet==3.0.4
 clint==0.5.1
 constantly==15.1.0
-cryptography==2.0.2
+cryptography==3.2
 cssselect==1.0.1
 cssselect2==0.2.0
 cyordereddict==1.0.0
