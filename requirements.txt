@@ -89,7 +89,7 @@ kombu==3.0.37
 librabbitmq==1.5.2
 linaro-django-pagination==2.0.3
 lml==0.0.1
-lxml==3.4.0
+lxml==4.6.2
 Markdown==2.5
 MarkupSafe==1.0
 mock==1.0.1
