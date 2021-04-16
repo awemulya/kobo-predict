@@ -37,7 +37,7 @@ django-braces==1.11.0
 django-celery==3.1.16
 django-cors-headers==0.13
 django-db-readonly==0.3.2
-django-debug-toolbar==1.8
+django-debug-toolbar==1.11.1
 -e git+https://github.com/jnm/django-digest@709f932ab72078ce10cf5ff9917500cb6226dc1e#egg=django_digest
 django-easy-pdf==0.1.1
 django-excel==0.0.9
