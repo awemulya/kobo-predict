@@ -15,7 +15,7 @@ begins==0.9
 billiard==3.3.0.23
 cairocffi==0.8.0
 CairoSVG==1.0.22
-celery==3.1.16
+celery==5.2.2
 certifi==2017.7.27.1
 cffi==1.10.0
 channels==1.1.3
