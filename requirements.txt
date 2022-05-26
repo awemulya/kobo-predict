@@ -155,7 +155,7 @@ tornado==4.5.2
 traitlets==4.3.2
 transifex-client==0.12.4
 twill==1.8.0
-Twisted==17.5.0
+Twisted==22.4.0
 txaio==2.8.1
 typing==3.6.1
 unicodecsv==0.9.4
