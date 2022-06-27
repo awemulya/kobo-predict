@@ -135,7 +135,7 @@ pytz==2017.2
 pyxform==0.11.5
 recaptcha-client==1.0.6
 redis==2.10.5
-reportlab==3.4.0
+reportlab==3.5.55
 requests==2.4.1
 requests-oauthlib==0.8.0
 savReaderWriter==3.3.0
